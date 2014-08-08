@@ -4,20 +4,18 @@ env:
  global:
   - EnableNuGetPackageRestore=true 
  matrix:
-  - MONO_VER="2.10.8"
+  - MONO_VER="2.10.8_3"
   - MONO_VER="3.0.12"
   - MONO_VER="3.1.2"
   - MONO_VER="3.2.7"
   - MONO_VER="3.4.0"
 
 before_install:
- - wget "http://download.mono-project.com/archive/${MONO_VER}/macos-10-x86/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg"
- - hdid "MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg"
- - sudo installer -pkg "/Volumes/Mono Framework MDK ${MONO_VER}/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target /
+ - .ci/install-mono.sh
 
 script:
  - .ci/install-certs.sh
  - xbuild /p:Configuration=Debug
- - .ci/nunit.sh bin/Debug/dnplatform_tests.dll
+ - .ci/nunit.sh bin/Debug/AnyCPU/dnplatform_tests.dll
  - xbuild /p:Configuration=Release
- - .ci/nunit.sh bin/Release/dnplatform_tests.dll
+ - .ci/nunit.sh bin/Release/AnyCPU/dnplatform_tests.dll
