@@ -4,51 +4,36 @@ using System.Diagnostics;
 using System.Linq;
 using DreamNetwork.PlatformServer.Networking;
 using DreamNetwork.PlatformServer.Networking.Messages;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace DreamNetwork.PlatformServer.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class NetworkTests
     {
-        [TestMethod]
+        [Test]
+        [ExpectedException(typeof (InvalidOperationException))]
         public void NetworkMessageRefuseSystemRequestId()
         {
             var server = new TestServer();
-            try
-            {
-                server.HandleMessage(TestClient.Create(), new ChannelChatMessage());
-
-                Assert.Fail(
-                    "Server accepts messages from the client with request ID 0 which is reserved for system messages!");
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch
-            {
-                Assert.Fail("Something else failed while checking if server refuses zeroed request IDs.");
-            }
-
-            try
-            {
-                server.HandleMessage(TestClient.Create(), new DisconnectMessage());
-            }
-            catch
-            {
-                Assert.Fail(
-                    "Server denies disconnect messages from the client with request ID 0, even though these are supposed to be exceptions!");
-            }
+            server.HandleMessage(TestClient.Create(), new ChannelChatMessage());
         }
 
-        [TestMethod]
+        [Test]
+        public void NetworkMessageNoRefuseDisconnectSystemRequestId()
+        {
+            var server = new TestServer();
+            server.HandleMessage(TestClient.Create(), new DisconnectMessage());
+        }
+
+        [Test]
         public void NetworkMessageTypeTest()
         {
             Assert.AreEqual(typeof (ChannelBroadcast),
                 Message.GetMessageTypeById(MessageDirection.ToClient, 1u << 16 | 5u));
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkMessageDeserializationTest()
         {
             // that's an AnonymousLoginRequest sample with empty profile, generated in the browser
@@ -64,7 +49,7 @@ namespace DreamNetwork.PlatformServer.Tests
             Assert.AreEqual((msg as AnonymousLoginRequest).Profile.Count, 0);
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkMessageConversationSerializationTest()
         {
             var msgs = new Message[]

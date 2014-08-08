@@ -1,17 +1,13 @@
-#if UBJSON
-using M1xA.Core.IO.Ubjson;
-#else
-#endif
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using DreamNetwork.PlatformServer.Logic;
 using DreamNetwork.PlatformServer.Networking.Messages;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace DreamNetwork.PlatformServer.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class LogicTests
     {
         private static Channel CreateTestChannel(Client owner, string[] tags = null)
@@ -24,7 +20,7 @@ namespace DreamNetwork.PlatformServer.Tests
             return channel;
         }
 
-        [TestMethod]
+        [Test]
         public void ChannelCreationTest()
         {
             var client = TestClient.Create();
@@ -42,7 +38,7 @@ namespace DreamNetwork.PlatformServer.Tests
             Assert.AreSame(channel.Tags, tags);
         }
 
-        [TestMethod]
+        [Test]
         public void ChannelJoinTest()
         {
             var client = TestClient.Create();
@@ -53,7 +49,7 @@ namespace DreamNetwork.PlatformServer.Tests
             Assert.IsTrue(client.SentMessages.Any(m => m is ChannelClientJoined && ((ChannelClientJoined)m).ClientGuid == client.Id));
         }
 
-        [TestMethod]
+        [Test]
         public void ChannelLeaveTest()
         {
             var client = TestClient.Create();
@@ -65,7 +61,7 @@ namespace DreamNetwork.PlatformServer.Tests
             Assert.IsTrue(client.SentMessages.Any(m => m is ChannelClientLeft && ((ChannelClientLeft)m).ClientGuid == client.Id));
         }
 
-        [TestMethod]
+        [Test]
         public void ChannelManagerOpenTest()
         {
             var client = TestClient.Create();
@@ -77,7 +73,7 @@ namespace DreamNetwork.PlatformServer.Tests
             Assert.IsTrue(channelManager.Channels.First().Clients.Contains(client));
         }
 
-        [TestMethod]
+        [Test]
         public void ChannelDiscoveryTest()
         {
             var channelManager = new TestChannelManager();
@@ -126,7 +122,7 @@ namespace DreamNetwork.PlatformServer.Tests
             CollectionAssert.AreEquivalent(expectedChannels.Where(c => c.Clients.Count() == 3).Select(c => c.Id).ToArray(), response.ChannelGuids);
 
             // Test "clients > 3"
-            Assert.IsTrue(channelManager.HandleTestMessage(mainClient, new ChannelDiscoveryRequest { Query = "clients() > 3" }));
+            Assert.IsTrue(channelManager.HandleTestMessage(mainClient, new ChannelDiscoveryRequest { Query = "clients > 3" }));
             Assert.IsTrue(mainClient.SentMessages.Any(m => m is ChannelDiscoveryResponse));
             response = mainClient.SentMessages.Last(m => m is ChannelDiscoveryResponse) as ChannelDiscoveryResponse;
             Assert.IsNotNull(response);
