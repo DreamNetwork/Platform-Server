@@ -45,18 +45,18 @@ namespace DreamNetwork.PlatformServer
                 js.AppendLine("var typeIds = {");
                 foreach (var i in dict)
                 {
-                    js.AppendFormat("\t\"{0}\": {{", i.Key);
+                    js.AppendFormat("    \"{0}\": {{", i.Key);
                     js.AppendLine();
 
                     foreach (var j in i.Value)
                     {
-                        js.AppendFormat("\t\t\"{0}\": 0x{1:X8}", j.Key, j.Value);
+                        js.AppendFormat("        \t\"{0}\": 0x{1:X8}", j.Key, j.Value);
                         if (!i.Value.Last().Equals(j))
                             js.Append(",");
                         js.AppendLine();
                     }
 
-                    js.Append("\t}");
+                    js.Append("    }");
                     if (!dict.Last().Equals(i))
                         js.Append(",");
                     js.AppendLine();
