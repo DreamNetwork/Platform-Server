@@ -1,4 +1,5 @@
-mozroots --import --sync
-yes yes | certmgr -ssl https://go.microsoft.com
-yes yes | certmgr -ssl https://nugetgallery.blob.core.windows.net
-yes yes | certmgr -ssl https://nuget.org
+#!/bin/sh
+mozroots --import --sync >/dev/null
+yes yes | certmgr -ssl https://go.microsoft.com >/dev/null
+yes yes | certmgr -ssl https://nugetgallery.blob.core.windows.net >/dev/null
+yes yes | certmgr -ssl https://nuget.org >/dev/null
