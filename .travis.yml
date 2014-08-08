@@ -16,6 +16,7 @@ before_install:
  - sudo installer -pkg "/Volumes/Mono Framework MDK ${MONO_VER}/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target /
 
 script:
+ - .ci/install-certs.sh
  - xbuild /p:Configuration=Debug
  - .ci/nunit.sh bin/Debug/dnplatform_tests.dll
  - xbuild /p:Configuration=Release
