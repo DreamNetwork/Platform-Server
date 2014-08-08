@@ -17,8 +17,8 @@ wget -q -Omono.pkg "http://download.xamarin.com/MonoFrameworkMDK/Macx86/MonoFram
 
 if [ -e "mono.dmg" ]; then
 	hdid "mono.dmg"
-	sudo installer -pkg "/Volumes/Mono Framework MDK ${MONO_VER}/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target / || \
-		sudo installer -pkg "/Volumes/MonoFramework-MDK-${MONO_VER}/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.pkg" -target /
+	sudo installer -pkg "/Volumes/Mono Framework MDK ${MONO_VER}/MonoFramework-MDK-${ORIGINAL_MONO_VER}.macos10.xamarin.x86.pkg" -target / || \
+		sudo installer -pkg "/Volumes/MonoFramework-MDK-${MONO_VER}/MonoFramework-MDK-${ORIGINAL_MONO_VER}.macos10.xamarin.x86.pkg" -target /
 else
 	sudo installer -pkg "mono.pkg" -target /
 fi
