@@ -11,7 +11,7 @@ wget -Omono.pkg "http://download.xamarin.com/MonoFrameworkMDK/Macx86/MonoFramewo
 	wget -Omono.dmg "http://download.xamarin.com/MonoFrameworkMDK/Macx86/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg" || \
 	wget -Omono.dmg "http://download.xamarin.com/MonoFrameworkMDK/Macx86/${MONO_VER_PREFIX}MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg" || \
 	wget -Omono.dmg "http://download.mono-project.com/archive/${MONO_VER}/macos-10-x86/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg" || \
-	wget -Omono.dmg "http://download.mono-project.com/archive/${MONO_VER}/${MONO_VER_PREFIX}macos-10-x86/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg" || \
+	wget -Omono.dmg "http://download.mono-project.com/archive/${MONO_VER}/${MONO_VER_PREFIX}macos-10-x86/MonoFramework-MDK-${MONO_VER}.macos10.xamarin.x86.dmg" || exit -1
 
 if [ -e "mono.dmg" ]; then
 	hdid "mono.dmg"
