@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using Fleck2;
+using Fleck;
 using StatusPlatform.Logic;
 
 namespace StatusPlatform.Networking.Servers

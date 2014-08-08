@@ -30,9 +30,9 @@ namespace StatusPlatform
                             .Where(
                                 t =>
                                     t.IsSubclassOf(typeof (Message)) && 
-                                    t.CustomAttributes.Any(c => c.AttributeType == typeof (MessageAttribute))))
+                                    t.GetCustomAttributes(typeof(MessageAttribute), false).Any()))
                 {
-                    var a = messageType.GetCustomAttribute<MessageAttribute>();
+                    var a = messageType.GetCustomAttributes(typeof(MessageAttribute), false).Single() as MessageAttribute;
                     dict[a.Directions == MessageDirection.ToServer ? "client" : a.Directions == MessageDirection.ToClient ? "server" : "both"].Add(messageType.Name, a.Type);
                 }
                 foreach (var i in dict["both"])

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StatusPlatform</RootNamespace>
     <AssemblyName>StatusPlatform</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
@@ -42,15 +42,14 @@
     <OutputPath>$(SolutionDir)\bin\$(Configuration)\$(Platform)\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fleck2">
-      <HintPath>$(SolutionDir)\packages\Fleck2.1.0.4\lib\net45\Fleck2.dll</HintPath>
+    <Reference Include="Fleck2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Fleck2.1.0.4\lib\net40\Fleck2.dll</HintPath>
     </Reference>
     <Reference Include="NCalc">
       <HintPath>$(SolutionDir)\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

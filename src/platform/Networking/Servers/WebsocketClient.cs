@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using Fleck2.Interfaces;
+using Fleck.Interfaces;
 using StatusPlatform.Logic;
 using StatusPlatform.Networking.Messages;
 
@@ -25,7 +25,7 @@ namespace StatusPlatform.Networking.Servers
                 if (msg != null)
                     foreach (var p in msg.GetType().GetProperties())
                     {
-                        Debug.WriteLine("> {0} = {1}", p.Name, p.GetValue(msg));
+                        Debug.WriteLine("> {0} = {1}", p.Name, p.GetValue(msg, null));
                     }
                 OnReceivedPacket(msg);
             };
@@ -59,7 +59,7 @@ namespace StatusPlatform.Networking.Servers
             }
             foreach (var p in message.GetType().GetProperties())
             {
-                Debug.WriteLine("> {0} = {1}", p.Name, p.GetValue(message));
+                Debug.WriteLine("> {0} = {1}", p.Name, p.GetValue(message, null));
             }
         }
 
