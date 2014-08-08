@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.Linq;
-using StatusPlatform.Logic;
-using StatusPlatform.Logic.Managers;
-using StatusPlatform.Networking;
-using StatusPlatform.Networking.Messages;
+using DreamNetwork.PlatformServer.Logic;
+using DreamNetwork.PlatformServer.Logic.Managers;
+using DreamNetwork.PlatformServer.Networking;
+using DreamNetwork.PlatformServer.Networking.Messages;
 
-namespace StatusPlatformTest
+namespace DreamNetwork.PlatformServer.Tests
 {
     public class TestChannelManager : ChannelManager
     {

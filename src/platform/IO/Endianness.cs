@@ -1,4 +1,4 @@
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     Endianness of a converter

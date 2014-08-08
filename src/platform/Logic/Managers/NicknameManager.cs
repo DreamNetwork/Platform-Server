@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StatusPlatform.Networking;
+﻿using DreamNetwork.PlatformServer.Networking;
 
-namespace StatusPlatform.Logic.Managers
+namespace DreamNetwork.PlatformServer.Logic.Managers
 {
     // TODO
     public class NicknameManager : Manager

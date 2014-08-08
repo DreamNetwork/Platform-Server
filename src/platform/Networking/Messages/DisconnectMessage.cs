@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 
-namespace StatusPlatform.Networking.Messages
+namespace DreamNetwork.PlatformServer.Networking.Messages
 {
     [Export(typeof (Message))]
     [Message(0xFFFFFFFF, MessageDirection.ToServer)]

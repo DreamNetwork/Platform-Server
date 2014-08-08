@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using DreamNetwork.PlatformServer.Logic;
+using DreamNetwork.PlatformServer.Networking.Messages;
 using Fleck.Interfaces;
-using StatusPlatform.Logic;
-using StatusPlatform.Networking.Messages;
 
-namespace StatusPlatform.Networking.Servers
+namespace DreamNetwork.PlatformServer.Networking.Servers
 {
     public class WebsocketClient : Client
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using StatusPlatform.Networking;
-using StatusPlatform.Networking.Messages;
+using DreamNetwork.PlatformServer.Networking;
+using DreamNetwork.PlatformServer.Networking.Messages;
 
-namespace StatusPlatform.Logic.Managers
+namespace DreamNetwork.PlatformServer.Logic.Managers
 {
     public class ClientManager : Manager
     {

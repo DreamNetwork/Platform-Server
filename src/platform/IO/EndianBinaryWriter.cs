@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     Equivalent of System.IO.BinaryWriter, but with either endianness, depending on

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     Equivalent of System.BitConverter, but with either endianness.

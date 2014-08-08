@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using DreamNetwork.PlatformServer.Networking;
+using DreamNetwork.PlatformServer.Networking.Messages;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StatusPlatform.Networking;
-using StatusPlatform.Networking.Messages;
 
-namespace StatusPlatformTest
+namespace DreamNetwork.PlatformServer.Tests
 {
     [TestClass]
     public class NetworkTests

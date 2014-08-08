@@ -1,6 +1,6 @@
 using System;
 
-namespace StatusPlatform.Networking.Messages
+namespace DreamNetwork.PlatformServer.Networking.Messages
 {
     public class ChannelRelatedMessage : Message
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace StatusPlatform.Networking
+namespace DreamNetwork.PlatformServer.Networking
 {
     [Flags]
     public enum MessageDirection

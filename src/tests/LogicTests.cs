@@ -1,15 +1,15 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 #if UBJSON
 using M1xA.Core.IO.Ubjson;
 #else
 #endif
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using DreamNetwork.PlatformServer.Logic;
+using DreamNetwork.PlatformServer.Networking.Messages;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StatusPlatform.Logic;
-using StatusPlatform.Networking.Messages;
 
-namespace StatusPlatformTest
+namespace DreamNetwork.PlatformServer.Tests
 {
     [TestClass]
     public class LogicTests

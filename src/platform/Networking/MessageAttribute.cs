@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StatusPlatform.Networking
+namespace DreamNetwork.PlatformServer.Networking
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class MessageAttribute : Attribute

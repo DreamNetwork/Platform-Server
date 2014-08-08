@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using DreamNetwork.PlatformServer.Logic;
 using Fleck;
-using StatusPlatform.Logic;
 
-namespace StatusPlatform.Networking.Servers
+namespace DreamNetwork.PlatformServer.Networking.Servers
 {
     public class WebsocketServer : Server
     {

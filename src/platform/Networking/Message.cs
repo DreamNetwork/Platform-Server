@@ -1,19 +1,19 @@
-﻿using System;
+﻿#if UBJSON
+using M1xA.Core.IO.Ubjson;
+using M1xA.Core.IO.Ubjson.Extensions;
+#endif
+using System;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-#if UBJSON
-using M1xA.Core.IO.Ubjson;
-using M1xA.Core.IO.Ubjson.Extensions;
-#endif
+using DreamNetwork.PlatformServer.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
-using StatusPlatform.IO;
 
-namespace StatusPlatform.Networking
+namespace DreamNetwork.PlatformServer.Networking
 {
     public abstract class Message
     {

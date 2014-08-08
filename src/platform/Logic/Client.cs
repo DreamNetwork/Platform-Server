@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using StatusPlatform.Networking;
-using StatusPlatform.Networking.Messages;
+using DreamNetwork.PlatformServer.Networking;
+using DreamNetwork.PlatformServer.Networking.Messages;
 
-namespace StatusPlatform.Logic
+namespace DreamNetwork.PlatformServer.Logic
 {
     public abstract class Client
     {

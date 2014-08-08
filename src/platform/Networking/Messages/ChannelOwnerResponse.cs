@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.Composition;
 
-namespace StatusPlatform.Networking.Messages
+namespace DreamNetwork.PlatformServer.Networking.Messages
 {
     [Export(typeof (Message))]
     [Message(1u << 16 | 8u, MessageDirection.ToClient)]

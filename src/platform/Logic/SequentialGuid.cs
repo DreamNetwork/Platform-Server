@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StatusPlatform.Logic
+namespace DreamNetwork.PlatformServer.Logic
 {
     // TODO: Consider getting away from DateTime.Now
     public class SequentialGuid

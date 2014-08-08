@@ -1,7 +1,7 @@
-using StatusPlatform.Logic;
-using StatusPlatform.Networking;
+using DreamNetwork.PlatformServer.Logic;
+using DreamNetwork.PlatformServer.Networking;
 
-namespace StatusPlatformTest
+namespace DreamNetwork.PlatformServer.Tests
 {
     public class TestServer : Server {
         public override void Start()

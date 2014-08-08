@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     Collection of utility methods which operate on streams.

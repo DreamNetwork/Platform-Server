@@ -3,11 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using DreamNetwork.PlatformServer.Networking;
+using DreamNetwork.PlatformServer.Networking.Messages;
 using NCalc;
-using StatusPlatform.Networking;
-using StatusPlatform.Networking.Messages;
 
-namespace StatusPlatform.Logic
+namespace DreamNetwork.PlatformServer.Logic
 {
     public class Channel
     {

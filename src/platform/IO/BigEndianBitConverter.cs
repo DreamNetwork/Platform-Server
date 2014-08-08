@@ -1,4 +1,4 @@
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     Implementation of EndianBitConverter which converts to/from big-endian

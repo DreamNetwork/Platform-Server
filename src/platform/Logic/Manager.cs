@@ -1,6 +1,6 @@
-using StatusPlatform.Networking;
+using DreamNetwork.PlatformServer.Networking;
 
-namespace StatusPlatform.Logic
+namespace DreamNetwork.PlatformServer.Logic
 {
     public abstract class Manager
     {

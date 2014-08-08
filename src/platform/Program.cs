@@ -5,11 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using StatusPlatform.Logic.Managers;
-using StatusPlatform.Networking;
-using StatusPlatform.Networking.Servers;
+using DreamNetwork.PlatformServer.Logic.Managers;
+using DreamNetwork.PlatformServer.Networking;
+using DreamNetwork.PlatformServer.Networking.Servers;
 
-namespace StatusPlatform
+namespace DreamNetwork.PlatformServer
 {
     static class Program
     {

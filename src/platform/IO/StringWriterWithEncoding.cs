@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     A simple class derived from StringWriter, but which allows

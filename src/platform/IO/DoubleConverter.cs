@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     A class to allow the conversion of doubles to string representations of

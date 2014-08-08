@@ -1,6 +1,6 @@
 using System;
 
-namespace StatusPlatform.IO
+namespace DreamNetwork.PlatformServer.IO
 {
     /// <summary>
     ///     Interface encapsulating a byte array which may be managed
