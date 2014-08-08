@@ -1,6 +1,7 @@
 #!/bin/sh
 MONO_VER_PREFIX=""
 if [ "${MONO_VER}" == "2.10.8_3" ]; then
+	MONO_VER="2.10.8"
 	MONO_VER_PREFIX="3/"
 fi
 
