@@ -12,10 +12,8 @@ env:
 
 before_install:
  - .ci/install-mono.sh
+ - .ci/install-certs.sh
 
 script:
- - .ci/install-certs.sh
- - xbuild /p:Configuration=Debug /verbosity:minimal
+ - xbuild /p:Configuration=Debug /verbosity:quiet /nologo
  - .ci/nunit.sh bin/Debug/AnyCPU/dnplatform_tests.dll
- - xbuild /p:Configuration=Release /verbosity:minimal
- - .ci/nunit.sh bin/Release/AnyCPU/dnplatform_tests.dll
