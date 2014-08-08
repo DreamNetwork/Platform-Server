@@ -1,0 +1,4 @@
+[submodule "externals/superwebsocket"]
+	path = externals/superwebsocket
+	url = https://git01.codeplex.com/superwebsocket
+	branch = master
