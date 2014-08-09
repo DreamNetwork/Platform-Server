@@ -10,7 +10,6 @@ namespace DreamNetwork.PlatformServer.Logic
     {
         protected Client()
         {
-
         }
 
         protected Client(Server server)
@@ -67,5 +66,25 @@ namespace DreamNetwork.PlatformServer.Logic
         }
 
         public event Action<Client> Connected;
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((Client) obj);
+        }
+
+        private bool Equals(Client other)
+        {
+            return Equals(Server, other.Server) && Id.Equals(other.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Server != null ? Server.GetHashCode() : 0)*397) ^ Id.GetHashCode();
+            }
+        }
     }
 }
