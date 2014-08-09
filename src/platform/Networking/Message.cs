@@ -31,7 +31,7 @@ namespace DreamNetwork.PlatformServer.Networking
 
         public static T CloneResponse<T>(Message request, T response) where T : Message
         {
-            var msg = response;
+            var msg = response.MemberwiseClone() as T;
 
             if (msg.MessageDirections != MessageDirection.ToClient)
                 throw new InvalidOperationException();

@@ -221,9 +221,9 @@ namespace DreamNetwork.PlatformServer.Logic
 
         public void Broadcast(Message message, Client sourceClient = null, Message request = null)
         {
-            foreach (var i in _clients)
+            foreach (var client in Clients)
             {
-                i.Value.Send(message, i.Value.Equals(sourceClient) ? request : null);
+                client.Send(message, client.Equals(sourceClient) ? request : null);
             }
         }
 
