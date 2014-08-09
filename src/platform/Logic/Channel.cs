@@ -223,7 +223,7 @@ namespace DreamNetwork.PlatformServer.Logic
         {
             foreach (var client in _clients.Values)
             {
-                if (sourceClient != null && client == sourceClient && request != null)
+                if (sourceClient != null && client.Equals(sourceClient) && request != null)
                 {
                     client.Send(Message.CloneResponse(request, message));
                     continue;
