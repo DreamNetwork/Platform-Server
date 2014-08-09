@@ -223,8 +223,7 @@ namespace DreamNetwork.PlatformServer.Logic
         {
             foreach (var i in _clients)
             {
-                i.Value.Send(message,
-                    sourceClient != null && i.Key == sourceClient.Id && request != null ? request : null);
+                i.Value.Send(message, i.Value.Equals(sourceClient) ? request : null);
             }
         }
 
