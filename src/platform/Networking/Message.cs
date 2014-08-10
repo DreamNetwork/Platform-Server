@@ -8,8 +8,8 @@ using System.Reflection;
 using System.Text;
 using DreamNetwork.PlatformServer.IO;
 using DreamNetwork.PlatformServer.Logic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
+using MsgPack;
+using MsgPack.Serialization;
 
 namespace DreamNetwork.PlatformServer.Networking
 {
@@ -42,11 +42,9 @@ namespace DreamNetwork.PlatformServer.Networking
             }
         }
 
-        [JsonIgnore]
-        public uint RequestId { get; internal set; }
+        internal uint RequestId { get; set; }
 
-        [JsonIgnore]
-        private MessageDirection MessageDirections
+        internal MessageDirection MessageDirections
         {
             get
             {
@@ -57,8 +55,7 @@ namespace DreamNetwork.PlatformServer.Networking
             }
         }
 
-        [JsonIgnore]
-        public uint MessageTypeId
+        internal uint MessageTypeId
         {
             get
             {
@@ -111,10 +108,8 @@ namespace DreamNetwork.PlatformServer.Networking
                     mw.Write(MessageTypeId); // msg type (4 bytes, uint)
                     mw.Flush();
 
-                    using (var mbson = new BsonWriter(new NonClosingStreamWrapper(mw.BaseStream)))
-                    {
-                        new JsonSerializer().Serialize(mbson, this);
-                    }
+                    var mser = new SerializationContext().GetSerializer(GetType());
+                    mser.Pack(mw.BaseStream, this);
                 }
 
                 message = ms.ToArray();
@@ -145,14 +140,14 @@ namespace DreamNetwork.PlatformServer.Networking
                         throw new ProtocolViolationException(
                             string.Format("No class found to handle packet of type 0x{0:X8}", typeId));
 
-                    using (var mbson = new BsonReader(new NonClosingStreamWrapper(ms)))
-                    {
-                        var msg = new JsonSerializer().Deserialize(mbson, type) as Message;
-                        if (msg == null)
-                            throw new AmbiguousMatchException("Deserialized a non-message type from the stream.");
-                        msg.RequestId = requestId;
-                        return msg;
-                    }
+                    var mser = new SerializationContext().GetSerializer(type);
+                    var msg = mser.Unpack(mr.BaseStream) as Message;
+
+                    if (msg == null)
+                        return null;
+
+                    msg.RequestId = requestId;
+                    return msg;
                 }
             }
         }

@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using DreamNetwork.PlatformServer.Networking;
 using DreamNetwork.PlatformServer.Networking.Messages;
+using MsgPack;
 using NUnit.Framework;
 
 namespace DreamNetwork.PlatformServer.Tests
 {
-    [TestFixture]
     public class NetworkTests
     {
         private void CheckNetworkMessageSerialization(Message originalMessage)
@@ -33,7 +33,44 @@ namespace DreamNetwork.PlatformServer.Tests
 
             Assert.AreEqual(originalMessage.MessageTypeId, message.MessageTypeId, "Deserialized type ID mismatch");
             Assert.AreEqual(originalMessage.GetType(), message.GetType(), "Deserialized type mismatch");
-            //Assert.AreEqual(originalMessage, message, "Deserialized content mismatch");
+            foreach (var p in originalMessage.GetType().GetProperties())
+            {
+                var value = p.GetValue(originalMessage, null);
+                var deserializedProperty = message.GetType().GetProperty(p.Name);
+                var deserializedValue = deserializedProperty.GetValue(message, null);
+                var deserializedPropertyType = deserializedValue == null ? deserializedProperty.PropertyType : deserializedValue.GetType();
+
+                Assert.AreEqual(p, deserializedProperty,
+                    "Deserialized message property mismatch (field: {0})", p.Name);
+
+                if (deserializedValue is MessagePackObject)
+                {
+                    var packedValue = (MessagePackObject) deserializedValue;
+                    Assert.IsTrue(packedValue.IsTypeOf(p.PropertyType).GetValueOrDefault());
+                    if (packedValue.IsRaw)
+                    {
+                        CollectionAssert.AreEqual(value as byte[], packedValue.AsBinary(),
+                            "Deserialized message content binary mismatch (field: {0})", p.Name);
+                    }
+                    else if (packedValue.IsArray)
+                    {
+                        // TODO: Is this even correct?
+                        CollectionAssert.AreEqual(value as Array, packedValue.ToObject() as Array,
+                            "Deserialized message content array mismatch (field: {0})", p.Name);
+                    }
+                    else
+                    {
+                        Assert.Inconclusive(
+                            "Can't determine whether field {0} has been deserialized correctly, MessagePackObject type test not implemented yet.",
+                            p.Name);
+                    }
+                } else if (deserializedPropertyType.IsArray)
+                    CollectionAssert.AreEqual(value as Array, deserializedValue as Array,
+                        "Deserialized message content array mismatch (field: {0})", p.Name);
+                else
+                    Assert.AreEqual(value, deserializedValue,
+                        "Deserialized message content mismatch (field: {0})", p.Name);
+            }
         }
 
         [Test]
@@ -81,22 +118,6 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void NetworkMessageDeserialization()
-        {
-            // that's an AnonymousLoginRequest sample with empty profile, generated in the browser
-            var buffer = new byte[]
-            {
-                0, 0, 0, 1, // request id
-                0, 0, 0, 1, // message type
-                19, 0, 0, 0, 3, 80, 114, 111, 102, 105, 108, 101, 0, 5, 0, 0, 0, 0, 0 // bson-encoded message body
-            };
-
-            var msg = Message.Deserialize(MessageDirection.ToServer, buffer);
-            Assert.IsTrue(msg is AnonymousLoginRequest);
-            Assert.AreEqual((msg as AnonymousLoginRequest).Profile.Count, 0);
-        }
-
-        [Test]
         public void NetworkMessageDuplicates()
         {
             var foundMessages = new Dictionary<uint, MessageDirection>();
@@ -140,7 +161,8 @@ namespace DreamNetwork.PlatformServer.Tests
         public void NetworkMessageRefuseSystemRequestId()
         {
             var server = new TestServer();
-            server.HandleMessage(TestClient.Create(), new ChannelBroadcastRequest() /* Request ID is set to default which is 0 */);
+            server.HandleMessage(TestClient.Create(), new ChannelBroadcastRequest()
+                /* Request ID is set to default which is 0 */);
         }
 
         [Test]
