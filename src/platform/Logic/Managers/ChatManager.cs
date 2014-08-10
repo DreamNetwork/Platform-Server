@@ -56,7 +56,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                     {
                         Timestamp = timestamp,
                         ClientGuid = sourceClient.Id,
-                        Message = request.Message
+                        Content = request.Content
                     }, message);
                 sourceClient.Send(new PrivateMessageResponse {Sent=true, Timestamp = timestamp}, message);
                 return true;
