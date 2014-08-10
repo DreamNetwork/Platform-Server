@@ -110,6 +110,11 @@ namespace DreamNetwork.PlatformServer.Tests
                     Assert.Fail("Message type 0x{0:X8} with direction {1} is defined more than once.", msgAttr.Type,
                         msgAttr.Directions);
                 }
+                if (foundMessages.ContainsKey(msgAttr.Type) && msgAttr.Directions.HasFlag(foundMessages[msgAttr.Type]))
+                {
+                    Assert.Fail("Message type 0x{0:X8} with direction {1} is defined more than once.", msgAttr.Type,
+                        foundMessages[msgAttr.Type]);
+                }
                 Debug.WriteLine("0x{0:X8} {1} = {2}", msgAttr.Type, msgAttr.Directions, msgType.FullName);
                 if (!foundMessages.ContainsKey(msgAttr.Type))
                     foundMessages.Add(msgAttr.Type, msgAttr.Directions);
