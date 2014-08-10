@@ -39,26 +39,26 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                 return false;
 
             // Private message request
-            if (message is PrivateChatMessageRequest)
+            if (message is PrivateMessageRequest)
             {
-                var request = message as PrivateChatMessageRequest;
+                var request = message as PrivateMessageRequest;
                 var targetClient = ClientManager.Clients.SingleOrDefault(c => c.Id == request.ClientGuid);
                 if (targetClient == default(Client))
                 {
-                    sourceClient.Send(new PrivateChatMessageResponse { Sent = false }, message);
+                    sourceClient.Send(new PrivateMessageResponse { Sent = false }, message);
                     sourceClient.Send(new ErrorClientNotFoundResponse(), message);
                     return false;
                 }
 
                 var timestamp = DateTime.UtcNow;
                 targetClient.Send(
-                    new PrivateChatMessage
+                    new PrivateMessage
                     {
                         Timestamp = timestamp,
                         ClientGuid = sourceClient.Id,
                         Message = request.Message
                     }, message);
-                sourceClient.Send(new PrivateChatMessageResponse {Sent=true, Timestamp = timestamp}, message);
+                sourceClient.Send(new PrivateMessageResponse {Sent=true, Timestamp = timestamp}, message);
                 return true;
             }
 

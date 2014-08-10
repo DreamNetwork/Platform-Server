@@ -111,9 +111,9 @@
     <Compile Include="Networking\MessageAttribute.cs" />
     <Compile Include="IO\StreamUtil.cs" />
     <Compile Include="IO\StringWriterWithEncoding.cs" />
-    <Compile Include="Networking\Messages\PrivateChatMessage.cs" />
-    <Compile Include="Networking\Messages\PrivateChatMessageRequest.cs" />
-    <Compile Include="Networking\Messages\PrivateChatMessageResponse.cs" />
+    <Compile Include="Networking\Messages\PrivateMessage.cs" />
+    <Compile Include="Networking\Messages\PrivateMessageRequest.cs" />
+    <Compile Include="Networking\Messages\PrivateMessageResponse.cs" />
     <Compile Include="Networking\Messages\PrivateProfileRequest.cs" />
     <Compile Include="Networking\Messages\PrivateProfileResponse.cs" />
     <Compile Include="Networking\Messages\ProfileUpdateRequest.cs" />
