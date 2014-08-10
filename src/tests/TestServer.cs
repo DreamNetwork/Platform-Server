@@ -39,7 +39,8 @@ namespace DreamNetwork.PlatformServer.Tests
             Debug.WriteLine("Creating server with default managers");
             return Create(
                 new ClientManager(),
-                new ChannelManager());
+                new ChannelManager(),
+                new CommunicationManager());
         }
 
         public TestClient CreateClient()

@@ -140,7 +140,7 @@ namespace DreamNetwork.PlatformServer.Tests
         public void NetworkMessageRefuseSystemRequestId()
         {
             var server = new TestServer();
-            server.HandleMessage(TestClient.Create(), new ChannelChatMessage());
+            server.HandleMessage(TestClient.Create(), new ChannelBroadcastRequest() /* Request ID is set to default which is 0 */);
         }
 
         [Test]

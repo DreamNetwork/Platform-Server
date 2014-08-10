@@ -410,5 +410,29 @@ namespace DreamNetwork.PlatformServer.Tests
             });
             Assert.IsTrue(c2.SentMessages.Any(m => m is ProfileUpdateResponse && !(m as ProfileUpdateResponse).Success), "Server accepted dupliate nickname change.");
         }
+
+        [Test]
+        public void PrivateMessage()
+        {
+            var s = TestServer.CreateDefault();
+            var c1 = s.CreateClient();
+            c1.TriggerReceive(
+                new AnonymousLoginRequest { Profile = new Dictionary<string, object> { { "Nickname", "t1" } } });
+            Assert.IsTrue(c1.SentMessages.Any(m => m is InitialPingMessage), "No response from server at all");
+            Assert.IsTrue(c1.SentMessages.Any(m => !(m is InitialPingMessage)), "No response from server at all except initial ping");
+            Assert.IsTrue(c1.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success), "Server did not accept valid login");
+
+            var c2 = s.CreateClient();
+            c2.TriggerReceive(
+                new AnonymousLoginRequest { Profile = new Dictionary<string, object> { { "Nickname", "t2" } } });
+            Assert.IsTrue(c2.SentMessages.Any(m => m is InitialPingMessage), "No response from server at all");
+            Assert.IsTrue(c2.SentMessages.Any(m => !(m is InitialPingMessage)), "No response from server at all except initial ping");
+            Assert.IsTrue(c2.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success), "Server did not accept valid login");
+
+            c1.TriggerReceive(new PrivateMessageRequest { ClientGuid = c2.Id, Content = new byte[4] });
+            Assert.IsTrue(c1.SentMessages.Any(m => m is PrivateMessageResponse), "Server did not handle private message");
+            Assert.IsTrue(c1.SentMessages.Any(m => m is PrivateMessageResponse && (m as PrivateMessageResponse).Sent), "Server reported failure at message delivery");
+            Assert.IsTrue(c2.SentMessages.Any(m => m is PrivateMessage && (m as PrivateMessage).ClientGuid == c1.Id), "Client did not receive private message");
+        }
     }
 }
