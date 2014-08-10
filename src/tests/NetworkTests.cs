@@ -37,7 +37,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void NetworkMessageConversationSerializationTest()
+        public void NetworkMessageConversationSerialization()
         {
             var msgs = new Message[]
             {
@@ -76,7 +76,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void NetworkMessageDeserializationTest()
+        public void NetworkMessageDeserialization()
         {
             // that's an AnonymousLoginRequest sample with empty profile, generated in the browser
             var buffer = new byte[]
@@ -92,7 +92,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void NetworkMessageDuplicatesTest()
+        public void NetworkMessageDuplicates()
         {
             var foundMessages = new Dictionary<uint, MessageDirection>();
             foreach (
@@ -139,7 +139,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void NetworkMessageTypeTest()
+        public void NetworkMessageType()
         {
             Assert.AreEqual(typeof (ChannelBroadcast),
                 Message.GetMessageTypeById(MessageDirection.ToClient, 1u << 16 | 5u));

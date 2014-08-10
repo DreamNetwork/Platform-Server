@@ -21,7 +21,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void ChannelCreationTest()
+        public void ChannelCreation()
         {
             var client = TestClient.Create();
             var tags = new[] {"test1", "test2"};
@@ -39,7 +39,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void ChannelJoinTest()
+        public void ChannelJoin()
         {
             var client = TestClient.Create();
             var channel = CreateTestChannel(client);
@@ -50,7 +50,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void ChannelLeaveTest()
+        public void ChannelLeave()
         {
             var client = TestClient.Create();
             var channel = CreateTestChannel(client);
@@ -62,7 +62,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void ChannelManagerOpenTest()
+        public void ChannelManagerOpen()
         {
             var client = TestClient.Create();
             var channelManager = new TestChannelManager();
@@ -74,7 +74,7 @@ namespace DreamNetwork.PlatformServer.Tests
         }
 
         [Test]
-        public void ChannelDiscoveryTest()
+        public void ChannelDiscovery()
         {
             var channelManager = new TestChannelManager();
 
