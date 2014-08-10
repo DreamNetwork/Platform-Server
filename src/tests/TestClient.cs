@@ -57,5 +57,9 @@ namespace DreamNetwork.PlatformServer.Tests
             return client;
         }
 
+        public void Close()
+        {
+            TriggerReceive(new DisconnectMessage());
+        }
     }
 }

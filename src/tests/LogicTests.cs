@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using DreamNetwork.PlatformServer.Logic;
 using DreamNetwork.PlatformServer.Logic.Managers;
+using DreamNetwork.PlatformServer.Networking;
 using DreamNetwork.PlatformServer.Networking.Messages;
 using NUnit.Framework;
 
@@ -152,6 +153,38 @@ namespace DreamNetwork.PlatformServer.Tests
                     m => m is ChannelClientJoined && ((ChannelClientJoined) m).ClientGuid == client.Id));
             Assert.IsTrue(channelManager.Channels.Count == 1);
             Assert.IsTrue(channelManager.Channels.First().Clients.Contains(client));
+        }
+
+        [Test]
+        public void ChannelCloseOwnerLeave()
+        {
+            var s = TestServer.Create(new ClientManager(), new TestChannelManager());
+
+            var oclient = s.CreateClient();
+            Assert.IsTrue(oclient.SentMessages.Any(m => m is InitialPingMessage));
+            oclient.TriggerReceive(new AnonymousLoginRequest());
+            Assert.IsTrue(oclient.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success));
+            var testchannel = s.GetManager<TestChannelManager>().AddChannel(oclient);
+            Assert.IsNotNull(testchannel);
+
+            var kclient = s.CreateClient();
+            Assert.IsTrue(kclient.SentMessages.Any(m => m is InitialPingMessage));
+            kclient.TriggerReceive(new AnonymousLoginRequest());
+            Assert.IsTrue(kclient.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success));
+            kclient.TriggerReceive(new ChannelJoinRequest
+            {
+                ChannelGuid = testchannel.Id
+            });
+            Assert.IsTrue(kclient.SentMessages.Any(m => m is ChannelClientJoined && (m as ChannelClientJoined).ClientGuid.Equals(kclient.Id)));
+            oclient.Close();
+
+            Assert.IsTrue(testchannel.IsClosed);
+            var kick = kclient.SentMessages.SingleOrDefault(m => m is ChannelClientKicked);
+            //kick = kick == default(Message) ? null : kick;
+            Assert.IsNotNull(kick);
+            var leave = kclient.SentMessages.SingleOrDefault(m => m is ChannelClientLeft);
+            Assert.IsNotNull(leave);
+            Assert.IsTrue(kclient.SentMessages.IndexOf(leave) < kclient.SentMessages.IndexOf(kick));
         }
 
         [Test]
