@@ -271,9 +271,9 @@ namespace DreamNetwork.PlatformServer.Logic
             var leaveMessage = new ChannelClientLeft {ChannelGuid = Id, ClientGuid = client.Id};
             if (request != null)
                 leaveMessage = Message.CloneResponse(request, leaveMessage);
-            Broadcast(leaveMessage);
+            Broadcast(leaveMessage, client, request);
             if (!removeSilently)
-                client.Send(leaveMessage);
+                client.Send(leaveMessage, request);
 
             // If channel is now ownerless, close the channel
             if (client != Owner)
