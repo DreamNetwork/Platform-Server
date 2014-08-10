@@ -45,6 +45,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                 var targetClient = ClientManager.Clients.SingleOrDefault(c => c.Id == request.ClientGuid);
                 if (targetClient == default(Client))
                 {
+                    sourceClient.Send(new PrivateChatMessageResponse { Sent = false }, message);
                     sourceClient.Send(new ErrorClientNotFoundResponse(), message);
                     return false;
                 }
@@ -57,7 +58,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                         ClientGuid = sourceClient.Id,
                         Message = request.Message
                     }, message);
-                sourceClient.Send(new PrivateChatMessageResponse {Timestamp = timestamp}, message);
+                sourceClient.Send(new PrivateChatMessageResponse {Sent=true, Timestamp = timestamp}, message);
                 return true;
             }
 
