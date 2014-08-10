@@ -83,9 +83,8 @@ namespace DreamNetwork.PlatformServer.Logic
 
         public bool ForceMessageRouting(Manager manager, Client sourceClient, Message message)
         {
-            // TODO: Logic mistake here or not?
-            //if (message.HandledByManagers.Contains(manager))
-            //    return false;
+            if (message.HandledByManagers.Contains(manager))
+                return false;
 
             var ret = manager.HandlePacket(sourceClient, message);
             message.HandledByManagers.Add(manager);

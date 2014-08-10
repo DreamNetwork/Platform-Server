@@ -19,7 +19,17 @@ namespace DreamNetwork.PlatformServer.Networking
 
         // TODO: Implement plugin framework-like behavior for message serialization
         private static CompositionContainer _packetContainer;
-        internal List<Manager> HandledByManagers = new List<Manager>();
+        internal readonly List<Manager> HandledByManagers = new List<Manager>();
+
+        public bool HandledBy<T>()
+        {
+            return HandledByManagers.Any(m => m is T);
+        }
+
+        public bool HandledBy(Manager manager)
+        {
+            return HandledByManagers.Any(m => m == manager);
+        }
 
         protected static CompositionContainer PacketContainer
         {
