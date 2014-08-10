@@ -15,7 +15,7 @@ namespace DreamNetwork.PlatformServer.Tests
             return HandlePacket(client, message);
         }
 
-        public Channel AddChannel(TestClient owner = null, string[] tags = null)
+        public Channel AddChannel(TestClient owner = null, string[] tags = null, string[] requiredProfileFields = null)
         {
             if (owner == null)
                 Debug.WriteLine("ChannelManager: creating channel with new dummy user");
@@ -26,9 +26,10 @@ namespace DreamNetwork.PlatformServer.Tests
                     AllowBroadcasts = true,
                     AllowClientDiscovery = true,
                     AllowOwnerClientDiscovery = true,
-                    Tags = tags ?? new string[0]
+                    Tags = tags ?? new string[0],
+                    RequiredProfileFields = requiredProfileFields
                 });
-            return Channels.Single(c => c.Id == ((ChannelClientJoined) owner.SentMessages.Last(m => m is ChannelClientJoined)).ChannelGuid);
+            return Channels.Single(c => c.Id == ((ChannelClientJoined)owner.SentMessages.Last(m => m is ChannelClientJoined)).ChannelGuid);
         }
 
         protected override bool AddChannel(Channel channel)

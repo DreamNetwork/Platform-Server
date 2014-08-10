@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 
 namespace DreamNetwork.PlatformServer.Networking.Messages
 {
-    [Export(typeof(Message))]
+    [Export(typeof (Message))]
     [Message(0xFFu << 16 | 3u, MessageDirection.ToClient)]
     public class ErrorActionNotAllowedResponse : Message
     {

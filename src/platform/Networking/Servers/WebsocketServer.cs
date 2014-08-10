@@ -14,13 +14,13 @@ namespace DreamNetwork.PlatformServer.Networking.Servers
         {
             _servers.Add(new WebSocketServer("ws://0.0.0.0:28110/"));
             if (File.Exists("server.pfx"))
-                _servers.Add(new WebSocketServer("wss://0.0.0.0:28111/") { Certificate = new X509Certificate2("server.pfx") });
+                _servers.Add(new WebSocketServer("wss://0.0.0.0:28111/")
+                {
+                    Certificate = new X509Certificate2("server.pfx")
+                });
 
             foreach (var server in _servers)
-                server.Start(c =>
-                {
-                    c.OnOpen = () => new WebsocketClient(this, c);
-                });
+                server.Start(c => { c.OnOpen = () => new WebsocketClient(this, c); });
         }
 
         public override void Stop()

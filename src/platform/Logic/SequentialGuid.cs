@@ -7,13 +7,11 @@ namespace DreamNetwork.PlatformServer.Logic
     // TODO: Consider getting away from DateTime.Now
     public class SequentialGuid
     {
-
-        public DateTime SequenceStartDate { get; private set; }
-        public DateTime SequenceEndDate { get; private set; }
-
         private const int NumberOfBytes = 6;
         private const int PermutationsOfAByte = 256;
-        private readonly long _maximumPermutations = (long)Math.Pow(PermutationsOfAByte, NumberOfBytes);
+        private static readonly Lazy<SequentialGuid> InstanceField = new Lazy<SequentialGuid>(() => new SequentialGuid());
+        private readonly long _maximumPermutations = (long) Math.Pow(PermutationsOfAByte, NumberOfBytes);
+        private readonly object _synchronizationObject = new object();
         private long _lastSequence;
 
         public SequentialGuid(DateTime sequenceStartDate, DateTime sequenceEndDate)
@@ -27,25 +25,19 @@ namespace DreamNetwork.PlatformServer.Logic
         {
         }
 
-        private static readonly Lazy<SequentialGuid> InstanceField = new Lazy<SequentialGuid>(() => new SequentialGuid());
+        public DateTime SequenceStartDate { get; private set; }
+        public DateTime SequenceEndDate { get; private set; }
+
         internal static SequentialGuid Instance
         {
-            get
-            {
-                return InstanceField.Value;
-            }
-        }
-
-        public static Guid NewGuid()
-        {
-            return Instance.GetGuid();
+            get { return InstanceField.Value; }
         }
 
         public TimeSpan TimePerSequence
         {
             get
             {
-                var ticksPerSequence = TotalPeriod.Ticks / _maximumPermutations;
+                var ticksPerSequence = TotalPeriod.Ticks/_maximumPermutations;
                 var result = new TimeSpan(ticksPerSequence);
                 return result;
             }
@@ -60,11 +52,16 @@ namespace DreamNetwork.PlatformServer.Logic
             }
         }
 
+        public static Guid NewGuid()
+        {
+            return Instance.GetGuid();
+        }
+
         private long GetCurrentSequence(DateTime value)
         {
             var ticksUntilNow = value.Ticks - SequenceStartDate.Ticks;
-            var result = ((decimal)ticksUntilNow / TotalPeriod.Ticks * _maximumPermutations - 1);
-            return (long)result;
+            var result = ((decimal) ticksUntilNow/TotalPeriod.Ticks*_maximumPermutations - 1);
+            return (long) result;
         }
 
         public Guid GetGuid()
@@ -72,7 +69,6 @@ namespace DreamNetwork.PlatformServer.Logic
             return GetGuid(DateTime.Now);
         }
 
-        private readonly object _synchronizationObject = new object();
         internal Guid GetGuid(DateTime now)
         {
             if (now < SequenceStartDate || now > SequenceEndDate)

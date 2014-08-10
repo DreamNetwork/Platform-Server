@@ -46,6 +46,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                     Debug.WriteLine(
                         "Received channel-related message for non-existant channel (Type: {0} [0x{1:X8}], Channel: {2})",
                         message.GetType(), message.MessageTypeId, chanPacket.ChannelGuid);
+                    sourceClient.Send(new ErrorChannelNotFoundResponse(), message);
                     return false;
                 }
                 var channel = _channels[chanPacket.ChannelGuid];
@@ -68,6 +69,13 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                     if (channel.IsClosed)
                     {
                         // TODO: notify client that channel is closed
+                        sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
+                        return false;
+                    }
+
+                    if (!channel.RequiredProfileFields.TrueForAll(sourceClient.Profile.ContainsKey))
+                    {
+                        // TODO: notify client about which profile fields are missing
                         sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
                         return false;
                     }
@@ -136,7 +144,8 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                         sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
                         return false;
                     }
-                    sourceClient.Send(new ChannelOwnerResponse { ChannelGuid = channel.Id, ClientGuid = channel.Owner.Id }, message);
+                    sourceClient.Send(
+                        new ChannelOwnerResponse {ChannelGuid = channel.Id, ClientGuid = channel.Owner.Id}, message);
                     return true;
                 }
 
@@ -176,7 +185,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                     if (channel != null)
                         Debug.WriteLine("Channel creation led to ID collision! (Channel: {0})", channel.Id);
 
-                    channel = new Channel(sourceClient, req.Tags, req.ChannelPassword, req.AllowBroadcasts,
+                    channel = new Channel(sourceClient, req.Tags, req.RequiredProfileFields, req.ChannelPassword, req.AllowBroadcasts,
                         req.AllowClientDiscovery, req.AllowOwnerClientDiscovery);
                 } while (_channels.ContainsKey(channel.Id));
 

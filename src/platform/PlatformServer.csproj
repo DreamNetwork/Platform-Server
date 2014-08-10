@@ -63,7 +63,6 @@
     <Compile Include="Logic\Managers\ChatManager.cs" />
     <Compile Include="Logic\Managers\ClientManager.cs" />
     <Compile Include="Logic\Manager.cs" />
-    <Compile Include="Logic\Managers\NicknameManager.cs" />
     <Compile Include="Networking\Messages\ChannelChatMessageRequest.cs" />
     <Compile Include="Networking\Messages\ChannelChatMessageSent.cs" />
     <Compile Include="Networking\Messages\ErrorActionNotAllowedResponse.cs" />
@@ -104,6 +103,8 @@
     <Compile Include="Networking\Messages\DisconnectMessage.cs" />
     <Compile Include="Networking\Messages\ErrorClientNotFoundResponse.cs" />
     <Compile Include="Networking\Messages\ErrorInvalidMessageResponse.cs" />
+    <Compile Include="Networking\Messages\ErrorInvalidNicknameResponse.cs" />
+    <Compile Include="Networking\Messages\ErrorNicknameAlreadyInUseResponse.cs" />
     <Compile Include="Networking\Messages\InitialPingMessage.cs" />
     <Compile Include="Networking\Messages\LoginResponse.cs" />
     <Compile Include="Networking\MessageDirection.cs" />
@@ -112,7 +113,11 @@
     <Compile Include="IO\StringWriterWithEncoding.cs" />
     <Compile Include="Networking\Messages\PrivateChatMessage.cs" />
     <Compile Include="Networking\Messages\PrivateChatMessageRequest.cs" />
-    <Compile Include="Networking\Messages\PrivateChatMessageSent.cs" />
+    <Compile Include="Networking\Messages\PrivateChatMessageResponse.cs" />
+    <Compile Include="Networking\Messages\PrivateProfileRequest.cs" />
+    <Compile Include="Networking\Messages\PrivateProfileResponse.cs" />
+    <Compile Include="Networking\Messages\UpdateProfileFieldsRequest.cs" />
+    <Compile Include="Networking\Messages\UpdateProfileFieldsResponse.cs" />
     <Compile Include="Networking\Servers\WebsocketClient.cs" />
     <Compile Include="Networking\Servers\WebsocketServer.cs" />
     <Compile Include="Program.cs" />

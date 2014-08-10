@@ -13,7 +13,7 @@ namespace DreamNetwork.PlatformServer.Logic
     {
         private readonly ConcurrentDictionary<Guid, Client> _clients = new ConcurrentDictionary<Guid, Client>();
 
-        public Channel(Client owner, string[] tags, string password = null, bool allowBroadcasts = true,
+        public Channel(Client owner, string[] tags, IEnumerable<string> requiredProfileFields = null, string password = null, bool allowBroadcasts = true,
             bool allowClientDiscovery = true, bool allowOwnerDiscovery = true)
         {
             if (owner == null)
@@ -24,8 +24,8 @@ namespace DreamNetwork.PlatformServer.Logic
                 password = null;
 
             Debug.WriteLine(
-                "New channel instance (owner is {0}, allowBroadcasts is {1}, allowClientDiscovery is {2}, allowOwnerDiscovery is {3})",
-                owner, allowBroadcasts, allowClientDiscovery, allowOwnerDiscovery);
+                "New channel instance (owner is {0})",
+                owner);
             Id = SequentialGuid.NewGuid();
             Owner = owner;
             Tags = tags;
@@ -33,9 +33,10 @@ namespace DreamNetwork.PlatformServer.Logic
             AllowBroadcasts = allowBroadcasts;
             AllowClientDiscovery = allowClientDiscovery;
             AllowOwnerDiscovery = allowOwnerDiscovery;
+            RequiredProfileFields = (requiredProfileFields ?? new List<string>()).ToList();
         }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         public string[] Tags { get; private set; }
 
@@ -44,6 +45,7 @@ namespace DreamNetwork.PlatformServer.Logic
             get { return _clients.Values; }
         }
 
+        // TODO: Allow ownership change
         public Client Owner { get; private set; }
 
         public bool AllowBroadcasts { get; set; }
@@ -55,6 +57,8 @@ namespace DreamNetwork.PlatformServer.Logic
         public bool IsClosed { get; private set; }
 
         public string Password { get; set; }
+
+        public List<string> RequiredProfileFields { get; private set; } 
 
         public bool Match(string query)
         {

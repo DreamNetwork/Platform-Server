@@ -7,8 +7,8 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
 {
     public class ChatManager : Manager
     {
-        private ChannelManager _chmInstance = null;
-        private ClientManager _clmInstance = null;
+        private ChannelManager _chmInstance;
+        private ClientManager _clmInstance;
 
         private ChannelManager ChannelManager
         {
@@ -20,6 +20,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                 return _chmInstance = Server.GetManager<ChannelManager>();
             }
         }
+
         private ClientManager ClientManager
         {
             get
@@ -49,8 +50,14 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                 }
 
                 var timestamp = DateTime.UtcNow;
-                targetClient.Send(new PrivateChatMessage { Timestamp = timestamp, ClientGuid = sourceClient.Id, Message = request.Message }, message);
-                sourceClient.Send(new PrivateChatMessageSent { Timestamp = timestamp }, message);
+                targetClient.Send(
+                    new PrivateChatMessage
+                    {
+                        Timestamp = timestamp,
+                        ClientGuid = sourceClient.Id,
+                        Message = request.Message
+                    }, message);
+                sourceClient.Send(new PrivateChatMessageResponse {Timestamp = timestamp}, message);
                 return true;
             }
 
@@ -71,7 +78,13 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                 }
 
                 var timestamp = DateTime.UtcNow;
-                channel.Broadcast(new ChannelChatMessage { Timestamp = timestamp, ClientGuid = sourceClient.Id, Message = request.Message }, sourceClient, message);
+                channel.Broadcast(
+                    new ChannelChatMessage
+                    {
+                        Timestamp = timestamp,
+                        ClientGuid = sourceClient.Id,
+                        Message = request.Message
+                    }, sourceClient, message);
                 return true;
             }
 

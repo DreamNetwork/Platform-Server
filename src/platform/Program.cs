@@ -11,7 +11,7 @@ using DreamNetwork.PlatformServer.Networking.Servers;
 
 namespace DreamNetwork.PlatformServer
 {
-    static class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {
@@ -29,11 +29,16 @@ namespace DreamNetwork.PlatformServer
                             .GetTypes()
                             .Where(
                                 t =>
-                                    t.IsSubclassOf(typeof (Message)) && 
-                                    t.GetCustomAttributes(typeof(MessageAttribute), false).Any()))
+                                    t.IsSubclassOf(typeof (Message)) &&
+                                    t.GetCustomAttributes(typeof (MessageAttribute), false).Any()))
                 {
-                    var a = messageType.GetCustomAttributes(typeof(MessageAttribute), false).Single() as MessageAttribute;
-                    dict[a.Directions == MessageDirection.ToServer ? "client" : a.Directions == MessageDirection.ToClient ? "server" : "both"].Add(messageType.Name, a.Type);
+                    var a =
+                        messageType.GetCustomAttributes(typeof (MessageAttribute), false).Single() as MessageAttribute;
+                    dict[
+                        a.Directions == MessageDirection.ToServer
+                            ? "client"
+                            : a.Directions == MessageDirection.ToClient ? "server" : "both"].Add(messageType.Name,
+                                a.Type);
                 }
                 foreach (var i in dict["both"])
                 {
