@@ -23,7 +23,7 @@ namespace DreamNetwork.PlatformServer.Tests
             sw.Start();
             var serializedMessage = originalMessage.Serialize();
             sw.Stop();
-            PrintUtils.HexDisplay(serializedMessage, "Serialized message, took" + sw.Elapsed.TotalSeconds + " sec");
+            PrintUtils.HexDisplay(serializedMessage, "Serialized message, took " + sw.Elapsed.TotalSeconds + " sec");
 
             sw.Reset();
             sw.Start();
