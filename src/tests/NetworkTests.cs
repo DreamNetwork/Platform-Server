@@ -38,7 +38,9 @@ namespace DreamNetwork.PlatformServer.Tests
                 var value = p.GetValue(originalMessage, null);
                 var deserializedProperty = message.GetType().GetProperty(p.Name);
                 var deserializedValue = deserializedProperty.GetValue(message, null);
-                var deserializedPropertyType = deserializedValue == null ? deserializedProperty.PropertyType : deserializedValue.GetType();
+                var deserializedPropertyType = deserializedValue == null
+                    ? deserializedProperty.PropertyType
+                    : deserializedValue.GetType();
 
                 Assert.AreEqual(p, deserializedProperty,
                     "Deserialized message property mismatch (field: {0})", p.Name);
@@ -64,7 +66,8 @@ namespace DreamNetwork.PlatformServer.Tests
                             "Can't determine whether field {0} has been deserialized correctly, MessagePackObject type test not implemented yet.",
                             p.Name);
                     }
-                } else if (deserializedPropertyType.IsArray)
+                }
+                else if (deserializedPropertyType.IsArray)
                     CollectionAssert.AreEqual(value as Array, deserializedValue as Array,
                         "Deserialized message content array mismatch (field: {0})", p.Name);
                 else
@@ -82,6 +85,7 @@ namespace DreamNetwork.PlatformServer.Tests
 
             var msgs = new Message[]
             {
+                new InitialPingMessage(),
                 new AnonymousLoginRequest
                 {
                     Profile = new Dictionary<string, object>()
