@@ -39,6 +39,10 @@ namespace DreamNetwork.PlatformServer.Tests
         [Test]
         public void NetworkMessageConversationSerialization()
         {
+            var rand = new Random();
+            var randomContent = new byte[1024];
+            rand.NextBytes(randomContent);
+
             var msgs = new Message[]
             {
                 new AnonymousLoginRequest
@@ -66,7 +70,8 @@ namespace DreamNetwork.PlatformServer.Tests
                     }
                 },
                 new ChannelJoinRequest {ChannelGuid = Guid.NewGuid()},
-                new ChannelClientJoined {ChannelGuid = Guid.NewGuid(), ClientGuid = Guid.NewGuid()}
+                new ChannelClientJoined {ChannelGuid = Guid.NewGuid(), ClientGuid = Guid.NewGuid()},
+                new ChannelBroadcast {ChannelGuid = Guid.NewGuid(), ClientId = Guid.NewGuid(), Content = randomContent}
             };
             foreach (var msg in msgs)
             {
