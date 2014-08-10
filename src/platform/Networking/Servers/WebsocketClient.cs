@@ -51,11 +51,12 @@ namespace DreamNetwork.PlatformServer.Networking.Servers
                     _connection.ConnectionInfo.ClientIpAddress,
                     message.GetType().Name.Split('.').Last(), message.MessageTypeId);
             }
-            catch
+            catch (Exception err)
             {
-                Debug.WriteLine("{0} did NOT receive message from us: {1} (0x{2:X8})",
+                Debug.WriteLine("{0} did NOT receive message from us: {1} (0x{2:X8}) -- {2}",
                     _connection.ConnectionInfo.ClientIpAddress,
-                    message.GetType().Name.Split('.').Last(), message.MessageTypeId);
+                    message.GetType().Name.Split('.').Last(), message.MessageTypeId,
+                    err);
             }
             foreach (var p in message.GetType().GetProperties())
             {
