@@ -5,7 +5,7 @@ namespace DreamNetwork.PlatformServer.Networking.Messages
 {
     [Export(typeof (Message))]
     [Message(2u << 16 | 1u << 8 | 1u, MessageDirection.ToServer)]
-    public class PrivateChatMessageRequest : ChannelRelatedMessage
+    public class PrivateChatMessageRequest
     {
         /// <summary>
         ///     Target user
