@@ -116,8 +116,8 @@
     <Compile Include="Networking\Messages\PrivateChatMessageResponse.cs" />
     <Compile Include="Networking\Messages\PrivateProfileRequest.cs" />
     <Compile Include="Networking\Messages\PrivateProfileResponse.cs" />
-    <Compile Include="Networking\Messages\UpdateProfileFieldsRequest.cs" />
-    <Compile Include="Networking\Messages\UpdateProfileFieldsResponse.cs" />
+    <Compile Include="Networking\Messages\ProfileUpdateRequest.cs" />
+    <Compile Include="Networking\Messages\ProfileUpdateResponse.cs" />
     <Compile Include="Networking\Servers\WebsocketClient.cs" />
     <Compile Include="Networking\Servers\WebsocketServer.cs" />
     <Compile Include="Program.cs" />

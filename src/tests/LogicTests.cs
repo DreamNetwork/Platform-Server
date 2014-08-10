@@ -291,12 +291,12 @@ namespace DreamNetwork.PlatformServer.Tests
             c.TriggerReceive(new AnonymousLoginRequest { Profile = new Dictionary<string, object> { { "Testfield", true } } });
             Assert.IsTrue(c.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success), "Server did not accept valid nickname.");
 
-            c.TriggerReceive(new UpdateProfileFieldsRequest
+            c.TriggerReceive(new ProfileUpdateRequest
             {
                 FieldsToDelete = new[] {"Testfield"},
                 ProfileFields = new Dictionary<string, object> {{"Testfield", true}}
             });
-            Assert.IsTrue(c.SentMessages.Any(m => m is UpdateProfileFieldsResponse && !(m as UpdateProfileFieldsResponse).Success), "Server accepted invalid profile update.");
+            Assert.IsTrue(c.SentMessages.Any(m => m is ProfileUpdateResponse && !(m as ProfileUpdateResponse).Success), "Server accepted invalid profile update.");
         }
 
         [Test]
@@ -309,11 +309,11 @@ namespace DreamNetwork.PlatformServer.Tests
             c.TriggerReceive(new AnonymousLoginRequest { Profile = new Dictionary<string, object> { { "Testfield", true } } });
             Assert.IsTrue(c.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success), "Server did not accept valid nickname.");
 
-            c.TriggerReceive(new UpdateProfileFieldsRequest
+            c.TriggerReceive(new ProfileUpdateRequest
             {
                 FieldsToDelete = new[] {  "Testfield" }
             });
-            Assert.IsTrue(c.SentMessages.Any(m => m is UpdateProfileFieldsResponse && (m as UpdateProfileFieldsResponse).Success), "Server did not accept valid profile field removal.");
+            Assert.IsTrue(c.SentMessages.Any(m => m is ProfileUpdateResponse && (m as ProfileUpdateResponse).Success), "Server did not accept valid profile field removal.");
             Assert.IsFalse(c.Profile.ContainsKey("Testfield"), "Test field still contained in profile even though server reported successful removal");
         }
 
@@ -329,11 +329,11 @@ namespace DreamNetwork.PlatformServer.Tests
             c.TriggerReceive(new AnonymousLoginRequest { Profile = new Dictionary<string, object>() });
             Assert.IsTrue(c.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success), "Server did not accept anonymous login");
 
-            c.TriggerReceive(new UpdateProfileFieldsRequest
+            c.TriggerReceive(new ProfileUpdateRequest
             {
                 FieldsToDelete = new[] { "Testfield" }
             });
-            Assert.IsTrue(c.SentMessages.Any(m => m is UpdateProfileFieldsResponse && (m as UpdateProfileFieldsResponse).Success), "Server did not accept valid (non-existent) profile field removal.");
+            Assert.IsTrue(c.SentMessages.Any(m => m is ProfileUpdateResponse && (m as ProfileUpdateResponse).Success), "Server did not accept valid (non-existent) profile field removal.");
         }
 
         [Test]
@@ -347,11 +347,11 @@ namespace DreamNetwork.PlatformServer.Tests
             c.TriggerReceive(new AnonymousLoginRequest { Profile = new Dictionary<string, object> { { "Nickname", "Testy" } } });
             Assert.IsTrue(c.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success), "Server did not accept valid nickname.");
 
-            c.TriggerReceive(new UpdateProfileFieldsRequest
+            c.TriggerReceive(new ProfileUpdateRequest
             {
                 ProfileFields = new Dictionary<string, object> {{"Nickname", "Testy2"}}
             });
-            Assert.IsTrue(c.SentMessages.Any(m => m is UpdateProfileFieldsResponse && (m as UpdateProfileFieldsResponse).Success), "Server did not accept valid nickname change.");
+            Assert.IsTrue(c.SentMessages.Any(m => m is ProfileUpdateResponse && (m as ProfileUpdateResponse).Success), "Server did not accept valid nickname change.");
         }
 
         [Test]
@@ -371,11 +371,11 @@ namespace DreamNetwork.PlatformServer.Tests
             c2.TriggerReceive(new AnonymousLoginRequest { Profile = new Dictionary<string, object> { { "Nickname", "Testy" } } });
             Assert.IsTrue(c2.SentMessages.Any(m => m is LoginResponse && (m as LoginResponse).Success), "Server did not accept valid nickname.");
 
-            c2.TriggerReceive(new UpdateProfileFieldsRequest
+            c2.TriggerReceive(new ProfileUpdateRequest
             {
                 ProfileFields = new Dictionary<string, object> { { "Nickname", "Testy2" } }
             });
-            Assert.IsTrue(c2.SentMessages.Any(m => m is UpdateProfileFieldsResponse && !(m as UpdateProfileFieldsResponse).Success), "Server accepted dupliate nickname change.");
+            Assert.IsTrue(c2.SentMessages.Any(m => m is ProfileUpdateResponse && !(m as ProfileUpdateResponse).Success), "Server accepted dupliate nickname change.");
         }
     }
 }

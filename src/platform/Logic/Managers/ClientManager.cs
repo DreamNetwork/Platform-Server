@@ -83,9 +83,9 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                 return false;
 
             // Profile updates
-            if (message is UpdateProfileFieldsRequest)
+            if (message is ProfileUpdateRequest)
             {
-                var req = message as UpdateProfileFieldsRequest;
+                var req = message as ProfileUpdateRequest;
                 
                 // detect fields which are requested to be both set and removed.
                 // that's a logic conflict and therefore we should just drop the request in that case.
@@ -137,7 +137,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
 
                 // result
                 var success = !failedFields.Any();
-                sourceClient.Send(new UpdateProfileFieldsResponse
+                sourceClient.Send(new ProfileUpdateResponse
                 {
                     FailedFields = failedFields.ToArray(),
                     Success = success
