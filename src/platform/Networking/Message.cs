@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using DreamNetwork.PlatformServer.IO;
 using DreamNetwork.PlatformServer.Logic;
@@ -108,8 +109,18 @@ namespace DreamNetwork.PlatformServer.Networking
                     mw.Write(MessageTypeId); // msg type (4 bytes, uint)
                     mw.Flush();
 
-                    var mser = new SerializationContext().GetSerializer(GetType());
-                    mser.Pack(mw.BaseStream, this);
+                    var msctx = new SerializationContext();
+                    var type = GetType();
+                    if (type.GetProperties().Any())
+                    {
+                        var mser = msctx.GetSerializer(type);
+                        mser.Pack(mw.BaseStream, this);
+                    }
+                    else
+                    {
+                        var mser = msctx.GetSerializer(typeof (object));
+                        mser.Pack(mw.BaseStream, null);
+                    }
                 }
 
                 message = ms.ToArray();
@@ -140,8 +151,17 @@ namespace DreamNetwork.PlatformServer.Networking
                         throw new ProtocolViolationException(
                             string.Format("No class found to handle packet of type 0x{0:X8}", typeId));
 
-                    var mser = new SerializationContext().GetSerializer(type);
-                    var msg = mser.Unpack(mr.BaseStream) as Message;
+                    var msctx = new SerializationContext();
+                    Message msg;
+                    if (type.GetProperties().Any())
+                    {
+                        var mser = msctx.GetSerializer(type);
+                        msg = mser.Unpack(mr.BaseStream) as Message;
+                    }
+                    else
+                    {
+                        msg = Activator.CreateInstance(type) as Message;
+                    }
 
                     if (msg == null)
                         return null;
