@@ -60,11 +60,9 @@
     <Compile Include="Logic\Channel.cs" />
     <Compile Include="Logic\Managers\ChannelManager.cs" />
     <Compile Include="Logic\Client.cs" />
-    <Compile Include="Logic\Managers\ChatManager.cs" />
+    <Compile Include="Logic\Managers\CommunicationManager.cs" />
     <Compile Include="Logic\Managers\ClientManager.cs" />
     <Compile Include="Logic\Manager.cs" />
-    <Compile Include="Networking\Messages\ChannelChatMessageRequest.cs" />
-    <Compile Include="Networking\Messages\ChannelChatMessageSent.cs" />
     <Compile Include="Networking\Messages\ErrorActionNotAllowedResponse.cs" />
     <Compile Include="Networking\Messages\ErrorChannelNotFoundResponse.cs" />
     <Compile Include="Networking\Messages\ErrorChannelPasswordInvalidResponse.cs" />
@@ -84,7 +82,6 @@
     <Compile Include="Networking\Messages\AnonymousLoginRequest.cs" />
     <Compile Include="Networking\Messages\ChannelBroadcast.cs" />
     <Compile Include="Networking\Messages\ChannelBroadcastRequest.cs" />
-    <Compile Include="Networking\Messages\ChannelChatMessage.cs" />
     <Compile Include="Networking\Messages\ChannelClientGuidListRequest.cs" />
     <Compile Include="Networking\Messages\ChannelClientGuidListResponse.cs" />
     <Compile Include="Networking\Messages\ChannelClientJoined.cs" />

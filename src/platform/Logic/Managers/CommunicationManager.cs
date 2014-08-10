@@ -43,14 +43,16 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
             if (message is PrivateMessageRequest)
             {
                 var request = message as PrivateMessageRequest;
-                if (ClientManager.Clients.All(c => c.Id != request.ClientGuid))
+                var targetClient = ClientManager.Clients.SingleOrDefault(c => c.Id == request.ClientGuid);
+
+                if (targetClient == default(Client))
                 {
+                    Debug.WriteLine("Client tried to send message to non-existant client");
                     sourceClient.Send(new PrivateMessageResponse { Sent = false }, message);
                     sourceClient.Send(new ErrorClientNotFoundResponse(), message);
                     return false;
                 }
 
-                var targetClient = ClientManager.Clients.Single(c => c.Id == request.ClientGuid);
 
                 var timestamp = DateTime.UtcNow;
                 targetClient.Send(
