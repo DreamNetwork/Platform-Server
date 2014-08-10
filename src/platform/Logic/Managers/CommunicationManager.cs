@@ -47,12 +47,10 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
 
                 if (targetClient == default(Client))
                 {
-                    Debug.WriteLine("Client tried to send message to non-existant client");
                     sourceClient.Send(new PrivateMessageResponse { Sent = false }, message);
                     sourceClient.Send(new ErrorClientNotFoundResponse(), message);
                     return false;
                 }
-
 
                 var timestamp = DateTime.UtcNow;
                 targetClient.Send(
