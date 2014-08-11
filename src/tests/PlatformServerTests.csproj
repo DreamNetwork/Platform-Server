@@ -61,10 +61,6 @@
     <Compile Include="TestServer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\externals\msgpack-cli\src\MsgPack.Net40\MsgPack.Net40.csproj">
-      <Project>{d45d4cbe-afe7-4e2a-945d-47aed564c39d}</Project>
-      <Name>MsgPack.Net40</Name>
-    </ProjectReference>
     <ProjectReference Include="..\platform\PlatformServer.csproj">
       <Project>{92101fde-8a72-4f6c-8fc5-7f9a3822de3d}</Project>
       <Name>PlatformServer</Name>

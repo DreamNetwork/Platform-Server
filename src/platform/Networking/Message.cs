@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
@@ -9,8 +8,8 @@ using System.Reflection;
 using System.Text;
 using DreamNetwork.PlatformServer.IO;
 using DreamNetwork.PlatformServer.Logic;
-using MsgPack;
-using MsgPack.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
 
 namespace DreamNetwork.PlatformServer.Networking
 {
@@ -21,6 +20,16 @@ namespace DreamNetwork.PlatformServer.Networking
         // TODO: Implement plugin framework-like behavior for message serialization
         private static CompositionContainer _packetContainer;
         internal readonly List<Manager> HandledByManagers = new List<Manager>();
+
+        public bool HandledBy<T>()
+        {
+            return HandledByManagers.Any(m => m is T);
+        }
+
+        public bool HandledBy(Manager manager)
+        {
+            return HandledByManagers.Any(m => m == manager);
+        }
 
         protected static CompositionContainer PacketContainer
         {
@@ -33,9 +42,11 @@ namespace DreamNetwork.PlatformServer.Networking
             }
         }
 
-        internal uint RequestId { get; set; }
+        [JsonIgnore]
+        public uint RequestId { get; internal set; }
 
-        internal MessageDirection MessageDirections
+        [JsonIgnore]
+        private MessageDirection MessageDirections
         {
             get
             {
@@ -46,7 +57,8 @@ namespace DreamNetwork.PlatformServer.Networking
             }
         }
 
-        internal uint MessageTypeId
+        [JsonIgnore]
+        public uint MessageTypeId
         {
             get
             {
@@ -55,16 +67,6 @@ namespace DreamNetwork.PlatformServer.Networking
                     .Single()
                     .Type;
             }
-        }
-
-        public bool HandledBy<T>()
-        {
-            return HandledByManagers.Any(m => m is T);
-        }
-
-        public bool HandledBy(Manager manager)
-        {
-            return HandledByManagers.Any(m => m == manager);
         }
 
         /// <summary>
@@ -109,17 +111,9 @@ namespace DreamNetwork.PlatformServer.Networking
                     mw.Write(MessageTypeId); // msg type (4 bytes, uint)
                     mw.Flush();
 
-                    var type = GetType();
-                    var msctx = new SerializationContext {SerializationMethod = SerializationMethod.Map};
-                    if (type.GetProperties().Any())
+                    using (var mbson = new BsonWriter(new NonClosingStreamWrapper(mw.BaseStream)))
                     {
-                        var mser = msctx.GetSerializer(type);
-                        mser.Pack(mw.BaseStream, this);
-                    }
-                    else
-                    {
-                        var mser = msctx.GetSerializer(typeof (object));
-                        mser.Pack(mw.BaseStream, null);
+                        new JsonSerializer().Serialize(mbson, this);
                     }
                 }
 
@@ -151,130 +145,16 @@ namespace DreamNetwork.PlatformServer.Networking
                         throw new ProtocolViolationException(
                             string.Format("No class found to handle packet of type 0x{0:X8}", typeId));
 
-                    Message msg;
-                    if (type.GetProperties().Any())
+                    using (var mbson = new BsonReader(new NonClosingStreamWrapper(ms)))
                     {
-                        var msctx = new SerializationContext { SerializationMethod = SerializationMethod.Map };
-                        var mser = msctx.GetSerializer(type);
-                        msg = mser.Unpack(mr.BaseStream) as Message;
-                        msg = NormalizeDecodedObject(msg) as Message;
+                        var msg = new JsonSerializer().Deserialize(mbson, type) as Message;
+                        if (msg == null)
+                            throw new AmbiguousMatchException("Deserialized a non-message type from the stream.");
+                        msg.RequestId = requestId;
+                        return msg;
                     }
-                    else
-                    {
-                        msg = Activator.CreateInstance(type) as Message;
-                    }
-
-                    if (msg == null)
-                        return null;
-
-                    msg.RequestId = requestId;
-                    return msg;
                 }
             }
-        }
-
-        private static object NormalizeDecodedObject(object obj)
-        {
-            var objType = obj.GetType();
-            foreach (var objProp in objType
-                .GetProperties()
-                .Where(p => p.CanWrite && p.CanRead))
-            {
-                var objValue = NormalizeDecodedValue(objProp.GetValue(obj, null));
-                objProp.SetValue(obj, objValue, null);
-            }
-            return obj;
-        }
-
-        private static object NormalizeDecodedValue(object objValue)
-        {
-            if (!(objValue is MessagePackObject))
-            {
-                if (objValue is IDictionary)
-                    return NormalizeDecodedDictionary(objValue as IDictionary);
-                if (objValue is Array)
-                    return NormalizeDecodedArray(objValue as Array);
-
-                return objValue;
-            }
-
-            var mpObj = (MessagePackObject) objValue;
-            if (mpObj.IsArray)
-            {
-                // I wonder if char[] needs special treatment
-                objValue = NormalizeDecodedArray(mpObj.ToObject() as Array);
-            }
-            else if (mpObj.IsDictionary /* = mpObj.IsMap */)
-            {
-                objValue = NormalizeDecodedDictionary(mpObj.AsDictionary());
-            }
-            else if (mpObj.IsList)
-            {
-                objValue = NormalizeDecodedList(mpObj.AsList());
-            }
-            else if (mpObj.IsRaw)
-            {
-                if (mpObj.UnderlyingType == typeof (string))
-                {
-                    objValue = mpObj.ToString();
-                }
-                else
-                {
-                    objValue = mpObj.AsBinary();
-                }
-            }
-            else if (mpObj.IsNil)
-            {
-                objValue = null;
-            }
-            return NormalizeDecodedObject(objValue);
-        }
-
-        private static IList NormalizeDecodedList(IEnumerable<MessagePackObject> list)
-        {
-            var castDict = list.Select(i => NormalizeDecodedValue(i)).ToArray();
-            var castType = castDict.Select(i => i.GetType()).FindEqualType();
-            var ret = Activator.CreateInstance(typeof(List<>).MakeGenericType(castType)) as IList;
-            foreach (var obj in castDict)
-                ret.Add(obj);
-            return ret;
-        }
-
-        private static IDictionary NormalizeDecodedDictionary(IDictionary dict)
-        {
-            if (dict is MessagePackObjectDictionary)
-            {
-                var boxedDict = dict as MessagePackObjectDictionary;
-                var ret1 = (IDictionary) Activator.CreateInstance(
-                    typeof (Dictionary<,>),
-                    boxedDict.Select(t => t.Key.GetType()).FindEqualType(),
-                    boxedDict.Select(t => t.Value.GetType()).FindEqualType());
-                foreach (var item in boxedDict)
-                    ret1.Add(NormalizeDecodedValue(item.Key), NormalizeDecodedValue(item.Value));
-                return ret1;
-            }
-
-            var ret = (IDictionary) Activator.CreateInstance(dict.GetType());
-            /*
-                typeof (Dictionary<,>).MakeGenericType(
-                    castDict.Select(i => i.Key.GetType()).FindEqualType(),
-                    castDict.Select(i => i.Value.GetType()).FindEqualType()));
-             */
-            foreach (var item in dict.Keys
-                .Cast<object>()
-                .Select(k => new {Key = NormalizeDecodedValue(k), Value = NormalizeDecodedValue(dict[k])}))
-            {
-                ret.Add(item.Key, item.Value);
-            }
-            return ret;
-        }
-
-        private static Array NormalizeDecodedArray(Array arr)
-        {
-            var ret = arr.Clone() as Array;
-            for (int i = 0; i < arr.Length; i++)
-                ret.SetValue(NormalizeDecodedValue(arr.GetValue(i)), i);
-            return ret;
         }
 
         public static Type GetMessageTypeById(MessageDirection direction, uint typeId)
