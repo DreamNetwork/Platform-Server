@@ -109,8 +109,8 @@ namespace DreamNetwork.PlatformServer.Networking
                     mw.Write(MessageTypeId); // msg type (4 bytes, uint)
                     mw.Flush();
 
-                    var msctx = new SerializationContext();
                     var type = GetType();
+                    var msctx = new SerializationContext {SerializationMethod = SerializationMethod.Map};
                     if (type.GetProperties().Any())
                     {
                         var mser = msctx.GetSerializer(type);
@@ -151,10 +151,10 @@ namespace DreamNetwork.PlatformServer.Networking
                         throw new ProtocolViolationException(
                             string.Format("No class found to handle packet of type 0x{0:X8}", typeId));
 
-                    var msctx = new SerializationContext();
                     Message msg;
                     if (type.GetProperties().Any())
                     {
+                        var msctx = new SerializationContext { SerializationMethod = SerializationMethod.Map };
                         var mser = msctx.GetSerializer(type);
                         msg = mser.Unpack(mr.BaseStream) as Message;
                         msg = NormalizeDecodedObject(msg) as Message;

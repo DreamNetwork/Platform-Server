@@ -43,9 +43,6 @@
     <OutputPath>$(SolutionDir)\bin\$(Configuration)\$(Platform)\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MsgPack, Version=0.5.0.0, Culture=neutral, PublicKeyToken=a2625990d5dc0167, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MsgPack.Cli.0.5.1\lib\net40-client\MsgPack.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -64,6 +61,10 @@
     <Compile Include="TestServer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\externals\msgpack-cli\src\MsgPack.Net40\MsgPack.Net40.csproj">
+      <Project>{d45d4cbe-afe7-4e2a-945d-47aed564c39d}</Project>
+      <Name>MsgPack.Net40</Name>
+    </ProjectReference>
     <ProjectReference Include="..\platform\PlatformServer.csproj">
       <Project>{92101fde-8a72-4f6c-8fc5-7f9a3822de3d}</Project>
       <Name>PlatformServer</Name>

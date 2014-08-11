@@ -1,0 +1,4 @@
+[submodule "externals/msgpack-cli"]
+	path = externals/msgpack-cli
+	url = git://github.com/msgpack/msgpack-cli.git
+	branch = 0.4
