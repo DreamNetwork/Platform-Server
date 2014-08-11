@@ -45,8 +45,12 @@ namespace DreamNetwork.PlatformServer.Tests
                 Assert.AreEqual(p, deserializedProperty,
                     "Deserialized message property mismatch (field: {0})", p.Name);
 
+                Debug.WriteLine("> Property {0}; Original type {1}; Deserialized type {2}", p.Name, p.PropertyType,
+                    deserializedValue == null ? "NULL" : deserializedValue.GetType().ToString());
+
                 if (deserializedValue is MessagePackObject)
                 {
+                    /*
                     var packedValue = (MessagePackObject) deserializedValue;
                     Assert.IsTrue(packedValue.IsTypeOf(p.PropertyType).GetValueOrDefault());
                     if (packedValue.IsRaw)
@@ -66,6 +70,8 @@ namespace DreamNetwork.PlatformServer.Tests
                             "Can't determine whether field {0} has been deserialized correctly, MessagePackObject type test not implemented yet.",
                             p.Name);
                     }
+                     */
+                    Assert.Fail("Deserialized value boxed in MsgPack type instead of given as a native type. (field: {0})", p.Name);
                 }
                 else if (deserializedPropertyType.IsArray)
                     CollectionAssert.AreEqual(value as Array, deserializedValue as Array,

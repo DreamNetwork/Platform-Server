@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using DreamNetwork.PlatformServer.IO;
 using DreamNetwork.PlatformServer.Logic;
@@ -21,16 +22,6 @@ namespace DreamNetwork.PlatformServer.Networking
         // TODO: Implement plugin framework-like behavior for message serialization
         private static CompositionContainer _packetContainer;
         internal readonly List<Manager> HandledByManagers = new List<Manager>();
-
-        public bool HandledBy<T>()
-        {
-            return HandledByManagers.Any(m => m is T);
-        }
-
-        public bool HandledBy(Manager manager)
-        {
-            return HandledByManagers.Any(m => m == manager);
-        }
 
         protected static CompositionContainer PacketContainer
         {
@@ -65,6 +56,16 @@ namespace DreamNetwork.PlatformServer.Networking
                     .Single()
                     .Type;
             }
+        }
+
+        public bool HandledBy<T>()
+        {
+            return HandledByManagers.Any(m => m is T);
+        }
+
+        public bool HandledBy(Manager manager)
+        {
+            return HandledByManagers.Any(m => m == manager);
         }
 
         /// <summary>
@@ -157,6 +158,7 @@ namespace DreamNetwork.PlatformServer.Networking
                     {
                         var mser = msctx.GetSerializer(type);
                         msg = mser.Unpack(mr.BaseStream) as Message;
+                        msg = NormalizeDecodedObject(msg) as Message;
                     }
                     else
                     {
@@ -170,6 +172,70 @@ namespace DreamNetwork.PlatformServer.Networking
                     return msg;
                 }
             }
+        }
+
+        private static object NormalizeDecodedObject(object obj)
+        {
+            var objType = obj.GetType();
+            foreach (var objProp in objType
+                .GetProperties()
+                .Where(p => p.CanWrite && p.CanRead))
+            {
+                var objValue = NormalizeDecodedValue(objProp.GetValue(obj, null));
+                objProp.SetValue(obj, objValue, null);
+            }
+            return obj;
+        }
+
+        private static object NormalizeDecodedValue(object objValue)
+        {
+            if (!(objValue is MessagePackObject))
+                return objValue;
+
+            var mpObj = (MessagePackObject) objValue;
+            if (mpObj.IsArray)
+            {
+                // I wonder if char[] needs special treatment
+                objValue = NormalizeDecodedArray(mpObj.ToObject() as Array);
+            }
+            else if (mpObj.IsDictionary /* = mpObj.IsMap */)
+            {
+                objValue = NormalizeDecodedDictionary(mpObj.AsDictionary());
+            }
+            else if (mpObj.IsList)
+            {
+                objValue = NormalizeDecodedList(mpObj.AsList());
+            }
+            else if (mpObj.IsRaw)
+            {
+                objValue = mpObj.AsBinary();
+            }
+            else if (mpObj.IsNil)
+            {
+                objValue = null;
+            }
+            return NormalizeDecodedObject(objValue);
+        }
+
+        private static List<object> NormalizeDecodedList(IEnumerable<MessagePackObject> list)
+        {
+            return list.Select(item => NormalizeDecodedValue(item.ToObject())).ToList();
+        }
+
+        private static Dictionary<object, object> NormalizeDecodedDictionary(MessagePackObjectDictionary dict)
+        {
+            return
+                dict.Select(
+                    item => new {Key = NormalizeDecodedValue(item.Key), Value = NormalizeDecodedValue(item.Value)})
+                    .ToDictionary(i => i.Key, i => i.Value);
+        }
+
+        private static object[] NormalizeDecodedArray(IEnumerable arr)
+        {
+            var obj = arr.Cast<object>().ToArray();
+            if (obj.All(o => o is MessagePackObject))
+                obj = NormalizeDecodedList(obj.Cast<MessagePackObject>()).ToArray();
+            return obj;
         }
 
         public static Type GetMessageTypeById(MessageDirection direction, uint typeId)
