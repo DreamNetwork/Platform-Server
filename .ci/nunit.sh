@@ -8,6 +8,9 @@ runTest(){
 	monoArgs="--runtime=v4.0"
 	case "$monoVersion" in
 		2.*)
+			echo "Disabling gshared optimization to circumvent mono bugs."
+			monoArgs="$monoArgs -O=-gshared"
+		;;
 		3.0.*)
 			echo "Disabling gshared optimization to circumvent mono bugs."
 			monoArgs="$monoArgs -O=-gshared"
