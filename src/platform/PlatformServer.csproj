@@ -63,6 +63,7 @@
     <Compile Include="Logic\Managers\CommunicationManager.cs" />
     <Compile Include="Logic\Managers\ClientManager.cs" />
     <Compile Include="Logic\Manager.cs" />
+    <Compile Include="Logic\Typing.cs" />
     <Compile Include="Networking\Messages\ErrorActionNotAllowedResponse.cs" />
     <Compile Include="Networking\Messages\ErrorChannelNotFoundResponse.cs" />
     <Compile Include="Networking\Messages\ErrorChannelPasswordInvalidResponse.cs" />

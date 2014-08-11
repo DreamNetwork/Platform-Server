@@ -189,7 +189,14 @@ namespace DreamNetwork.PlatformServer.Networking
         private static object NormalizeDecodedValue(object objValue)
         {
             if (!(objValue is MessagePackObject))
+            {
+                if (objValue is IDictionary)
+                    return NormalizeDecodedDictionary(objValue as IDictionary);
+                if (objValue is Array)
+                    return NormalizeDecodedArray(objValue as Array);
+
                 return objValue;
+            }
 
             var mpObj = (MessagePackObject) objValue;
             if (mpObj.IsArray)
@@ -207,7 +214,14 @@ namespace DreamNetwork.PlatformServer.Networking
             }
             else if (mpObj.IsRaw)
             {
-                objValue = mpObj.AsBinary();
+                if (mpObj.UnderlyingType == typeof (string))
+                {
+                    objValue = mpObj.ToString();
+                }
+                else
+                {
+                    objValue = mpObj.AsBinary();
+                }
             }
             else if (mpObj.IsNil)
             {
@@ -216,25 +230,51 @@ namespace DreamNetwork.PlatformServer.Networking
             return NormalizeDecodedObject(objValue);
         }
 
-        private static List<object> NormalizeDecodedList(IEnumerable<MessagePackObject> list)
+        private static IList NormalizeDecodedList(IEnumerable<MessagePackObject> list)
         {
-            return list.Select(item => NormalizeDecodedValue(item.ToObject())).ToList();
+            var castDict = list.Select(i => NormalizeDecodedValue(i)).ToArray();
+            var castType = castDict.Select(i => i.GetType()).FindEqualType();
+            var ret = Activator.CreateInstance(typeof(List<>).MakeGenericType(castType)) as IList;
+            foreach (var obj in castDict)
+                ret.Add(obj);
+            return ret;
         }
 
-        private static Dictionary<object, object> NormalizeDecodedDictionary(MessagePackObjectDictionary dict)
+        private static IDictionary NormalizeDecodedDictionary(IDictionary dict)
         {
-            return
-                dict.Select(
-                    item => new {Key = NormalizeDecodedValue(item.Key), Value = NormalizeDecodedValue(item.Value)})
-                    .ToDictionary(i => i.Key, i => i.Value);
+            if (dict is MessagePackObjectDictionary)
+            {
+                var boxedDict = dict as MessagePackObjectDictionary;
+                var ret1 = (IDictionary) Activator.CreateInstance(
+                    typeof (Dictionary<,>),
+                    boxedDict.Select(t => t.Key.GetType()).FindEqualType(),
+                    boxedDict.Select(t => t.Value.GetType()).FindEqualType());
+                foreach (var item in boxedDict)
+                    ret1.Add(NormalizeDecodedValue(item.Key), NormalizeDecodedValue(item.Value));
+                return ret1;
+            }
+
+            var ret = (IDictionary) Activator.CreateInstance(dict.GetType());
+            /*
+                typeof (Dictionary<,>).MakeGenericType(
+                    castDict.Select(i => i.Key.GetType()).FindEqualType(),
+                    castDict.Select(i => i.Value.GetType()).FindEqualType()));
+             */
+            foreach (var item in dict.Keys
+                .Cast<object>()
+                .Select(k => new {Key = NormalizeDecodedValue(k), Value = NormalizeDecodedValue(dict[k])}))
+            {
+                ret.Add(item.Key, item.Value);
+            }
+            return ret;
         }
 
-        private static object[] NormalizeDecodedArray(IEnumerable arr)
+        private static Array NormalizeDecodedArray(Array arr)
         {
-            var obj = arr.Cast<object>().ToArray();
-            if (obj.All(o => o is MessagePackObject))
-                obj = NormalizeDecodedList(obj.Cast<MessagePackObject>()).ToArray();
-            return obj;
+            var ret = arr.Clone() as Array;
+            for (int i = 0; i < arr.Length; i++)
+                ret.SetValue(NormalizeDecodedValue(arr.GetValue(i)), i);
+            return ret;
         }
 
         public static Type GetMessageTypeById(MessageDirection direction, uint typeId)
