@@ -14,6 +14,6 @@ namespace DreamNetwork.PlatformServer.Networking.Messages
     public class ProfileUpdate : Message
     {
         public Guid ClientGuid { get; set; }
-        public Dictionary<string, object> ProfileFields { get; set; } 
+        public Dictionary<string, object> ProfileFields { get; set; }
     }
 }
