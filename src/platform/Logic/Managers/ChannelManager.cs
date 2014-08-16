@@ -29,7 +29,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                 foreach (var channel in Channels.Where(c => c.Clients.Contains(sourceClient)).ToArray())
                 {
                     channel.RemoveClient(sourceClient, true);
-                    if (channel.IsClosed)
+                    if (!channel.Clients.Contains(channel.Owner))
                         RemoveChannel(channel);
                 }
                 return true;
