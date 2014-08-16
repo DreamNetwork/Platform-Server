@@ -39,7 +39,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
             var chanPacket = message as ChannelRelatedMessage;
             if (chanPacket != null)
             {
-                // TODO: allow owner to close down channel
+                // TODO: allow owner to close down channel (temporarily)
 
                 if (!_channels.ContainsKey(chanPacket.ChannelGuid))
                 {
@@ -50,18 +50,6 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                     return false;
                 }
                 var channel = _channels[chanPacket.ChannelGuid];
-
-                // Broadcast requests
-                if (chanPacket is ChannelBroadcastRequest)
-                {
-                    if (!channel.AllowBroadcasts && sourceClient != channel.Owner)
-                    {
-                        sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
-                        return false;
-                    }
-                    channel.Broadcast((chanPacket as ChannelBroadcastRequest).Content, sourceClient, message);
-                    return true;
-                }
 
                 // Join requests
                 if (chanPacket is ChannelJoinRequest)
@@ -88,6 +76,26 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                     }
 
                     return channel.AddClient(sourceClient, message);
+                }
+
+                // All messages below this condition require the client to have joined the channel
+                if (!channel.Clients.Contains(sourceClient))
+                {
+                    // client not in said channel
+                    sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
+                    return false;
+                }
+
+                // Broadcast requests
+                if (chanPacket is ChannelBroadcastRequest)
+                {
+                    if (!channel.AllowBroadcasts && sourceClient != channel.Owner)
+                    {
+                        sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
+                        return false;
+                    }
+                    channel.Broadcast((chanPacket as ChannelBroadcastRequest).Content, sourceClient, message);
+                    return true;
                 }
 
                 // Leave requests
@@ -145,6 +153,34 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                     }
                     sourceClient.Send(
                         new ChannelOwnerResponse {ChannelGuid = channel.Id, ClientGuid = channel.Owner.Id}, message);
+                    return true;
+                }
+
+                // Channel set property requests
+                if (chanPacket is ChannelSetPropertyRequest)
+                {
+                    if (channel.Owner != sourceClient)
+                    {
+                        sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
+                        return false;
+                    }
+
+                    var req = chanPacket as ChannelSetPropertyRequest;
+                    channel.SetProperty(req.Name, req.Value, sourceClient, message);
+                    return true;
+                }
+
+                // Channel delete property requests
+                if (chanPacket is ChannelDeletePropertyRequest)
+                {
+                    if (channel.Owner != sourceClient)
+                    {
+                        sourceClient.Send(new ErrorActionNotAllowedResponse(), message);
+                        return false;
+                    }
+
+                    var req = chanPacket as ChannelDeletePropertyRequest;
+                    channel.DeleteProperty(req.Name, sourceClient, message);
                     return true;
                 }
 

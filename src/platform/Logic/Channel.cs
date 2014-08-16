@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using DreamNetwork.PlatformServer.IO;
 using DreamNetwork.PlatformServer.Networking;
 using DreamNetwork.PlatformServer.Networking.Messages;
 using NCalc;
@@ -58,7 +59,11 @@ namespace DreamNetwork.PlatformServer.Logic
 
         public string Password { get; set; }
 
-        public List<string> RequiredProfileFields { get; private set; } 
+        public List<string> RequiredProfileFields { get; private set; }
+
+        private readonly ConcurrentDictionary<string, object> _properties = new ConcurrentDictionary<string, object>();
+
+        public ReadOnlyDictionary<string, object> Properties { get { return new ReadOnlyDictionary<string, object>(_properties); } } 
 
         public bool Match(string query)
         {
@@ -251,6 +256,18 @@ namespace DreamNetwork.PlatformServer.Logic
                 return false;
 
             Broadcast(new ChannelClientJoined {ChannelGuid = Id, ClientGuid = client.Id}, client, request);
+
+            // tell client about all current properties set in the channel
+            foreach (var property in Properties)
+            {
+                client.Send(new ChannelPropertyNotification
+                {
+                    ChannelGuid = Id,
+                    Deleted = false,
+                    Name = property.Key,
+                    Value = property.Value
+                }, request);
+            }
             return true;
         }
 
@@ -276,6 +293,39 @@ namespace DreamNetwork.PlatformServer.Logic
                 client.Send(leaveMessage, request);
 
             return true;
+        }
+
+        public void DeleteProperty(string name, Client sourceClient, Message message)
+        {
+            object oldValue;
+            if (_properties.TryRemove(name, out oldValue))
+            {
+                Broadcast(new ChannelPropertyNotification {ChannelGuid = Id, Deleted = true, Name = name}, sourceClient,
+                    message);
+            }
+        }
+
+        public void SetProperty(string name, object value, Client sourceClient, Message message)
+        {
+            // The logic seems too primitive here
+            if (_properties.ContainsKey(name))
+            {
+                if (_properties.TryUpdate(name, value, _properties[name]))
+                {
+                    Broadcast(
+                        new ChannelPropertyNotification {ChannelGuid = Id, Deleted = false, Name = name, Value = value},
+                        sourceClient, message);
+                }
+            }
+            else
+            {
+                if (_properties.TryAdd(name, value))
+                {
+                    Broadcast(
+                        new ChannelPropertyNotification { ChannelGuid = Id, Deleted = false, Name = name, Value = value },
+                        sourceClient, message);
+                }
+            }
         }
     }
 }
