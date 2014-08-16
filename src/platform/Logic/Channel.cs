@@ -275,12 +275,6 @@ namespace DreamNetwork.PlatformServer.Logic
             if (!removeSilently)
                 client.Send(leaveMessage, request);
 
-            // If channel is now ownerless, close the channel
-            if (client != Owner)
-                return true;
-            IsClosed = true;
-            KickAll();
-
             return true;
         }
     }

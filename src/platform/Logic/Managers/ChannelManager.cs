@@ -100,8 +100,7 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
                         return false;
                     }
 
-                    // TODO: Make 100% sure the channel gets removed
-                    return !channel.IsClosed || RemoveChannel(channel);
+                    return channel.Clients.Contains(channel.Owner) || RemoveChannel(channel);
                 }
 
                 // Client discovery requests
