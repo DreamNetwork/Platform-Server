@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using DreamNetwork.PlatformServer.IO;
+using DreamNetwork.PlatformServer.Logic.Managers;
 using DreamNetwork.PlatformServer.Networking;
 using DreamNetwork.PlatformServer.Networking.Messages;
 using NCalc;
@@ -55,7 +56,7 @@ namespace DreamNetwork.PlatformServer.Logic
 
         public bool AllowOwnerDiscovery { get; set; }
 
-        public bool IsClosed { get; private set; }
+        public bool IsClosed { get { return !Clients.Contains(Owner); } }
 
         public string Password { get; set; }
 
@@ -249,7 +250,7 @@ namespace DreamNetwork.PlatformServer.Logic
 
         public bool AddClient(Client client, Message request = null)
         {
-            if (IsClosed)
+            if (IsClosed && client != Owner)
                 return false;
 
             if (!_clients.TryAdd(client.Id, client))

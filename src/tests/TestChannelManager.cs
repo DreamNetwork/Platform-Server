@@ -41,7 +41,7 @@ namespace DreamNetwork.PlatformServer.Tests
         protected override bool RemoveChannel(Channel channel)
         {
             Debug.WriteLine("ChannelManager: removing channel {0}", channel.Id);
-            return base.AddChannel(channel);
+            return base.RemoveChannel(channel);
         }
     }
 }

@@ -239,13 +239,11 @@ namespace DreamNetwork.PlatformServer.Logic.Managers
 
         protected virtual bool AddChannel(Channel channel)
         {
-            Debug.WriteLine("Adding channel {0}", channel.Id);
             return _channels.TryAdd(channel.Id, channel);
         }
 
         protected virtual bool RemoveChannel(Channel channel)
         {
-            Debug.WriteLine("Removing channel {0}", channel.Id);
             channel.KickAll();
             Channel tempChannel;
             return _channels.TryRemove(channel.Id, out tempChannel);
