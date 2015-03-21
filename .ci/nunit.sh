@@ -1,7 +1,5 @@
 #!/bin/sh
 
-mono --runtime=v4.0 .nuget/NuGet.exe install NUnit.Runners -o packages
-
 runTest(){
 	# check mono version to avoid specific bugs
 	monoVersion=`mono --version | head -n1 | cut -f1 -d"(" | sed 's/[[:alpha:]|(|[:space:]]//g' | awk -F- '{print $1}'`

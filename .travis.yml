@@ -1,19 +1,18 @@
-language: objective-c
+language: csharp
 
-env:
- global:
-  - EnableNuGetPackageRestore=true 
- matrix:
-  - MONO_VER="2.10.8_3"
-  - MONO_VER="3.0.12"
-  - MONO_VER="3.1.2"
-  - MONO_VER="3.2.7"
-  - MONO_VER="3.4.0"
+mono:
+- latest
+- 3.10.0
+- 3.8.0
+- 3.2.8
+- 2.10.8
 
-before_install:
- - .ci/install-mono.sh
- - .ci/install-certs.sh
+install:
+- nuget restore PlatformServer.sln
+- nuget install NUnit.Runners -o packages
+
+solution: PlatformServer.sln
 
 script:
- - xbuild /p:Configuration=Debug /verbosity:quiet /nologo
+ - xbuild /p:Configuration=Debug /verbosity:quiet /nologo PlatformServer.sln
  - .ci/nunit.sh bin/Debug/AnyCPU/dnplatform_tests.dll
